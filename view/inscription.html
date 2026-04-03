@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - SportFuel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .panel.signup-mode { transform: translateX(100%); }
+        .image-area { transform: translateX(-30px); opacity: 0; animation: fadeInLeft 0.7s forwards; }
+        .form-section { transform: translateX(30px); opacity: 0; animation: fadeInRight 0.7s forwards; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="image-area">
+            <h3>Hello friends, ready to start?</h3>
+        </div>
+        <div class="form-section">
+            <div class="form-box">
+                <h2>Inscription</h2>
+                <form id="inscriptionForm">
+                    <input type="text" id="nom" placeholder="Nom complet" required>
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="password" id="password" placeholder="Mot de passe" required>
+                    <input type="password" id="confirmPassword" placeholder="Confirmer mot de passe" required>
+                    <input type="number" id="age" placeholder="Age" required>
+                    <input type="number" id="poids" placeholder="Poids (kg)" required>
+                    <input type="number" id="taille" placeholder="Taille (cm)" required>
+                    <button type="submit">S'inscrire</button>
+                </form>
+                <a class="link-btn" href="connexion.html">Déjà un compte ? Se connecter</a>
+            </div>
+        </div>
+    </div>
+    <script src="inscription.js"></script>
+</body>
+</html>

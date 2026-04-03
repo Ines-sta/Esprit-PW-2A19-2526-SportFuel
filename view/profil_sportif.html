@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Sportif - SportFuel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="panel">
+        <div class="content">
+            <div class="form-box">
+                <h2>Profil Sportif</h2>
+                <form id="profilForm">
+                    <select id="sport" required>
+                        <option value="">Sport pratiqué</option>
+                        <option value="marathon">Marathon</option>
+                        <option value="musculation">Musculation</option>
+                        <option value="yoga">Yoga</option>
+                        <option value="natation">Natation</option>
+                    </select>
+                    <select id="objectif" required>
+                        <option value="">Objectif</option>
+                        <option value="prise_masse">Prise de masse</option>
+                        <option value="perte_poids">Perte de poids</option>
+                        <option value="endurance">Endurance</option>
+                    </select>
+                    <select id="niveau" required>
+                        <option value="">Niveau</option>
+                        <option value="debutant">Débutant</option>
+                        <option value="intermediaire">Intermédiaire</option>
+                        <option value="avance">Avancé</option>
+                    </select>
+                    <input type="number" id="frequence" placeholder="Fréquence (séances/semaine)" required>
+                    <button type="submit">Enregistrer</button>
+                </form>
+            </div>
+        </div>
+        <div class="image-area">
+            <h3>Améliore ton entraînement</h3>
+        </div>
+    </div>
+    <script src="profil_sportif.js"></script>
+</body>
+</html>
