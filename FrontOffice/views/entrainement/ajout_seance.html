@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportFuel — Ajouter une séance</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        /* Styles spécifiques à la page */
+        .form-section {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #2d6a4f;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #52b788;
+            box-shadow: 0 0 0 3px rgba(82,183,136,0.1);
+        }
+        .btn-submit {
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover {
+            background: #1b4d3e;
+        }
+        .info-card {
+            background: #d8f3dc;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="#" class="navbar-brand">
+        <div class="navbar-logo">SF</div>
+        <span>Sport<em>Fuel</em></span>
+    </a>
+    <ul class="navbar-links">
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Mon plan</a></li>
+        <li><a href="#" class="active">Entraînements</a></li>
+        <li><a href="../courses/courses.html">Courses</a></li>
+        <li><a href="../aliments/aliments.html">Aliments</a></li>
+    </ul>
+    <div class="navbar-user">IN</div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <!-- En-tête -->
+    <div style="margin-bottom: 32px;">
+        <h1 style="font-size: 28px; margin-bottom: 8px;">🏋️ Ajouter une séance sportive</h1>
+        <p style="color: #5a6e7c;">Enregistrez votre activité physique et suivez vos progrès</p>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="stat-cards" style="margin-bottom: 32px;">
+        <div class="stat-card">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Séances ce mois</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">2 450</div>
+            <div class="stat-label">Calories brûlées</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">87</div>
+            <div class="stat-label">Minutes moy.</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">4.8</div>
+            <div class="stat-label">Ressenti ⭐</div>
+        </div>
+    </div>
+
+    <!-- Formulaire d'ajout -->
+    <div class="form-section">
+        <h2 style="margin-bottom: 24px; font-size: 20px;">📝 Nouvelle séance</h2>
+        <form action="#" method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Type d'entraînement *</label>
+                    <select required>
+                        <option value="">Sélectionnez</option>
+                        <option>Musculation</option>
+                        <option>Cardio</option>
+                        <option>Course à pied</option>
+                        <option>Natation</option>
+                        <option>Yoga</option>
+                        <option>Vélo</option>
+                        <option>HIIT</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date de la séance *</label>
+                    <input type="date" value="2026-04-07" required>
+                </div>
+                <div class="form-group">
+                    <label>Durée (minutes) *</label>
+                    <input type="number" placeholder="45" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Intensité</label>
+                    <select>
+                        <option>Faible</option>
+                        <option selected>Modérée</option>
+                        <option>Élevée</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Calories estimées</label>
+                    <input type="number" placeholder="~ 300 kcal">
+                </div>
+                <div class="form-group">
+                    <label>Distance (km) - optionnel</label>
+                    <input type="text" placeholder="Ex: 5.2 km">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Notes / ressenti</label>
+                    <textarea rows="3" placeholder="Comment vous êtes-vous senti ? Difficultés, performances, coach..."></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn-submit">✅ Enregistrer la séance</button>
+        </form>
+    </div>
+
+    <!-- Dernière séance ajoutée -->
+    <div class="info-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong>📌 Dernière séance enregistrée</strong><br>
+                <span style="font-size: 14px;">Musculation - 55 min - 06/04/2026</span>
+            </div>
+            <span class="badge badge-success">+420 kcal</span>
+        </div>
+    </div>
+
+    <!-- Conseils -->
+    <div class="card" style="margin-top: 24px;">
+        <div class="card-header">💡 Conseil du coach</div>
+        <div style="padding: 16px;">
+            <p style="color: #5a6e7c;">Pensez à bien vous échauffer avant chaque séance et à vous hydrater régulièrement. Notez vos sensations pour mieux suivre votre progression !</p>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    &copy; 2026 SportFuel — Nutrition intelligente pour sportifs
+</div>
+
+</body>
+</html>

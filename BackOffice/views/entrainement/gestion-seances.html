@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportFuel Admin — Gestion des séances</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .filters-bar {
+            background: white;
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .filter-item label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #2d6a4f;
+            text-transform: uppercase;
+        }
+        .filter-item select, .filter-item input {
+            padding: 8px 14px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            font-family: inherit;
+        }
+        .table-wrapper {
+            background: white;
+            border-radius: 24px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #edf2f7;
+        }
+        th {
+            background: #f8fafc;
+            color: #2d6a4f;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .badge-validee {
+            background: #d8f3dc;
+            color: #2d6a4f;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            display: inline-block;
+        }
+        .badge-attente {
+            background: #fff3e0;
+            color: #e67e22;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            display: inline-block;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+        .btn-icon:hover {
+            background: #f0f2f8;
+        }
+        .export-bar {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .btn-outline {
+            background: white;
+            border: 1px solid #2d6a4f;
+            color: #2d6a4f;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .btn-outline:hover {
+            background: #d8f3dc;
+        }
+        @media (max-width: 1000px) {
+            .filters-bar { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <a href="#" class="sidebar-brand">
+        <div class="sidebar-logo">SF</div>
+        <span>Sport<em>Fuel</em></span>
+    </a>
+    <div class="sidebar-role">ADMIN</div>
+
+    <ul class="sidebar-menu">
+        <li><a href="#"><span class="icon">📊</span> Dashboard</a></li>
+    </ul>
+    <div class="sidebar-section">Modules</div>
+    <ul class="sidebar-menu">
+        <li><a href="#"><span class="icon">👥</span> Utilisateurs</a></li>
+        <li><a href="#"><span class="icon">🍽️</span> Plans alimentaires</a></li>
+        <li><a href="#" class="active"><span class="icon">🏋️</span> Entraînements</a></li>
+        <li><a href="../aliments/aliments.html"><span class="icon">🥗</span> Aliments & courses</a></li>
+        <li><a href="../categories/categories.html"><span class="icon">📁</span> Catégories</a></li>
+        <li><a href="../courses/courses.html"><span class="icon">🛒</span> Listes de courses</a></li>
+        <li><a href="#"><span class="icon">🤝</span> Espace coach</a></li>
+    </ul>
+    <div class="sidebar-section">Général</div>
+    <ul class="sidebar-menu">
+        <li><a href="#"><span class="icon">📈</span> Statistiques</a></li>
+        <li><a href="#"><span class="icon">⚙️</span> Paramètres</a></li>
+    </ul>
+</aside>
+
+<!-- MAIN AREA -->
+<div class="main-area">
+    <div class="topbar">
+        <h1>⚙️ Gestion des séances</h1>
+        <span class="date">Mardi 7 avril 2026</span>
+    </div>
+
+    <!-- Cartes stats -->
+    <div class="stat-cards" style="margin-bottom: 28px;">
+        <div class="stat-card"><div class="stat-value">346</div><div class="stat-label">Séances totales</div></div>
+        <div class="stat-card"><div class="stat-value">48</div><div class="stat-label">Cette semaine</div></div>
+        <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">À venir</div></div>
+        <div class="stat-card"><div class="stat-value">8</div><div class="stat-label">Coachs actifs</div></div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-bar">
+        <div class="filter-item"><label>Type</label><select><option>Tous</option><option>Musculation</option><option>Cardio</option><option>Course</option><option>Natation</option><option>Yoga</option></select></div>
+        <div class="filter-item"><label>Intensité</label><select><option>Toutes</option><option>Faible</option><option>Modérée</option><option>Élevée</option></select></div>
+        <div class="filter-item"><label>Statut</label><select><option>Tous</option><option>Validée</option><option>En attente</option></select></div>
+        <div class="filter-item"><label>Coach</label><select><option>Tous</option><option>Karim T.</option><option>Nadia R.</option><option>Sarra M.</option></select></div>
+        <div class="filter-item"><label>Date</label><input type="date" value="2026-04-07"></div>
+        <div class="filter-item"><button class="btn btn-primary" style="padding: 8px 24px;">🔍 Appliquer</button></div>
+    </div>
+
+    <!-- Tableau des séances -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr><th>ID</th><th>Utilisateur</th><th>Type</th><th>Durée</th><th>Intensité</th><th>Date</th><th>Coach</th><th>Statut</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>#S001</td><td>Ahmed B.</td><td>Musculation</td><td>55 min</td><td>Élevée</td><td>07/04/2026</td><td>Karim T.</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
+                <tr><td>#S002</td><td>Sarra M.</td><td>Yoga</td><td>45 min</td><td>Faible</td><td>06/04/2026</td><td>Sarra M.</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
+                <tr><td>#S003</td><td>Karim T.</td><td>Course à pied</td><td>40 min</td><td>Modérée</td><td>05/04/2026</td><td>Nadia R.</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
+                <tr><td>#S004</td><td>Nadia R.</td><td>Natation</td><td>60 min</td><td>Élevée</td><td>04/04/2026</td><td>Yassine L.</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
+                <tr><td>#S005</td><td>Yassine L.</td><td>Vélo</td><td>50 min</td><td>Modérée</td><td>03/04/2026</td><td>Karim T.</td><td><span class="badge-attente">En attente</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
+                <tr><td>#S006</td><td>Leila B.</td><td>Cardio</td><td>30 min</td><td>Modérée</td><td>02/04/2026</td><td>—</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
+                <tr><td>#S007</td><td>Mehdi A.</td><td>Musculation</td><td>70 min</td><td>Élevée</td><td>01/04/2026</td><td>Karim T.</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
+                <tr><td>#S008</td><td>Ines S.</td><td>Crossfit</td><td>45 min</td><td>Élevée</td><td>31/03/2026</td><td>Nadia R.</td><td><span class="badge-attente">En attente</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Barre d'exportation -->
+    <div class="export-bar">
+        <button class="btn-outline">📤 Exporter CSV</button>
+        <button class="btn-outline">🖨️ Imprimer</button>
+        <button class="btn btn-primary">➕ Nouvelle séance</button>
+    </div>
+</div>
+
+</body>
+</html>
