@@ -93,9 +93,9 @@ Esprit-PW-2A19-2526-SportFuel/
 |---|---|
 | Ines Sta | [@ines-sta](https://github.com/ines-sta) |
 | Maram Bendoulet | [@maram807](https://github.com/maram807) |
-| Yassine Bellagha | — |
-| Dhya Laabidi | — |
-| Bayrem Hariz | — |
+| Yassine Bellagha | [@Yassineeee](https://github.com/Yassineeee) |
+| Dhya Laabidi | [@dhyaaaa](https://github.com/dhyaaaa) |
+| Bayrem Hariz | [@bayremhariz](https://github.com/bayremhariz) |
 
 ## Contributions
 
