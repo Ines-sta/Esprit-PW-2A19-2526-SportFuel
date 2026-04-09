@@ -5,83 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SportFuel Admin — Gestion des entraînements</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
-    <style>
-        .form-card {
-            background: white;
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 32px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .form-group label {
-            font-weight: 600;
-            font-size: 12px;
-            color: #2d6a4f;
-        }
-        .form-group input, .form-group select {
-            padding: 10px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-        }
-        .table-wrapper {
-            background: white;
-            border-radius: 24px;
-            overflow-x: auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 14px 16px;
-            text-align: left;
-            border-bottom: 1px solid #edf2f7;
-        }
-        th {
-            background: #f8fafc;
-            color: #2d6a4f;
-            font-weight: 600;
-            font-size: 13px;
-        }
-        .badge-actif {
-            background: #d8f3dc;
-            color: #2d6a4f;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 12px;
-        }
-        .badge-inactif {
-            background: #fee2e2;
-            color: #c0392b;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 12px;
-        }
-        .actions {
-            display: flex;
-            gap: 8px;
-        }
-        .btn-icon {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-        }
-        @media (max-width: 1000px) {
-            .form-row { grid-template-columns: 1fr; }
-        }
-    </style>
+    <link rel="stylesheet" href="../../assets/css/entrainement.css">
+
 </head>
 <body>
 
@@ -121,7 +46,7 @@
     </div>
 
     <!-- Cartes stats -->
-    <div class="stat-cards" style="margin-bottom: 28px;">
+    <div class="stat-cards section-spacing">
         <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">Programmes actifs</div></div>
         <div class="stat-card"><div class="stat-value">346</div><div class="stat-label">Utilisateurs assignés</div></div>
         <div class="stat-card"><div class="stat-value">87%</div><div class="stat-label">Taux complétion</div></div>
@@ -130,7 +55,7 @@
 
     <!-- Formulaire ajout programme -->
     <div class="form-card">
-        <h2 style="margin-bottom: 20px; font-size: 18px;">➕ Nouveau programme d'entraînement</h2>
+        <h2 class="section-title">➕ Nouveau programme d'entraînement</h2>
         <form action="#" method="post">
             <div class="form-row">
                 <div class="form-group"><label>Nom du programme *</label><input type="text" placeholder="Ex: Prise de masse express"></div>
