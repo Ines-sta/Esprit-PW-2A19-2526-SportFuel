@@ -11,9 +11,11 @@ CREATE TABLE IF NOT EXISTS utilisateurs (
     age INT DEFAULT 0,
     poids FLOAT DEFAULT 0,
     taille FLOAT DEFAULT 0,
-    sport VARCHAR(100) DEFAULT NULL,
-    objectif VARCHAR(100) DEFAULT NULL,
+    sport_pratique VARCHAR(100) DEFAULT 'Aucun',
+    objectif VARCHAR(100) DEFAULT 'Non défini',
     niveau VARCHAR(100) DEFAULT 'Débutant',
-    frequence INT DEFAULT 0,
-    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    seances_semaine INT DEFAULT 0,
+    role VARCHAR(50) DEFAULT 'Sportif',
+    statut VARCHAR(50) DEFAULT 'Actif',
+    date_inscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

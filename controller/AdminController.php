@@ -28,9 +28,11 @@ if ($action === 'delete') {
     $data = json_decode(file_get_contents('php://input'), true);
     if (!empty($data['email']) && !empty($data['nom']) && !empty($data['password'])) {
         try {
-            $user = new Utilisateur(null, $data['nom'], $data['email'], password_hash($data['password'], PASSWORD_BCRYPT), 
+            $user = new Utilisateur(null, $data['nom'], $data['email'], $data['password'], 
                                     $data['age'] ?? 0, 0, 0, $data['sport'] ?? 'Aucun', 
-                                    'Non défini', 'Débutant', 1, $data['role'] ?? 'Sportif', 'Actif');
+                                    'Non défini', 'Débutant', 1, $data['role'] ?? 'Sportif', $data['statut'] ?? 'Actif');
+            // We use setPassword manually because the constructor just assigns the raw pass
+            $user->setPassword($data['password']); 
             $success = $user->save($pdo);
             echo json_encode(['success' => $success]);
         } catch (Exception $e) {
