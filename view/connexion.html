@@ -25,9 +25,9 @@
         <div class="content">
             <div class="form-box">
                 <h2>Connexion</h2>
-                <form id="connexionForm">
-                    <input type="email" id="email" placeholder="Email" required>
-                    <input type="password" id="password" placeholder="Mot de passe" required>
+                <form id="connexionForm" action="../controller/AuthController.php?action=connexion" method="POST" novalidate>
+                    <input type="text" name="email" id="email" placeholder="📧 Email">
+                    <input type="password" name="password" id="password" placeholder="🔒 Mot de passe">
                     <button type="submit">Se connecter</button>
                 </form>
                 <a class="link-btn" href="inscription.html">Pas de compte ? S'inscrire</a>

@@ -1,0 +1,13 @@
+# Database configuration
+controller/config.php
+
+# PHP errors and logs
+*.log
+error_log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# SQL dumps (optional, but database.sql might be a setup script so maybe keep it)
+# database.sql
