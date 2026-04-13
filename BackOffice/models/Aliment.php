@@ -9,14 +9,14 @@ class Aliment {
     }
 
     // CREATE
-    public function ajouter($nom, $id_categorie, $kcal_portion, $co2_impact, $est_bio, $est_local) {
+    public function ajouter($nom, $categorie, $kcal_portion, $co2_impact, $est_bio, $est_local) {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO aliment (nom, id_categorie, kcal_portion, co2_impact, est_bio, est_local) 
-             VALUES (:nom, :id_categorie, :kcal_portion, :co2_impact, :est_bio, :est_local)"
+            "INSERT INTO aliment (nom, categorie, kcal_portion, co2_impact, est_bio, est_local) 
+             VALUES (:nom, :categorie, :kcal_portion, :co2_impact, :est_bio, :est_local)"
         );
         $stmt->execute([
             ':nom' => $nom,
-            ':id_categorie' => $id_categorie,
+            ':categorie' => $categorie,
             ':kcal_portion' => $kcal_portion,
             ':co2_impact' => $co2_impact,
             ':est_bio' => $est_bio,
@@ -25,13 +25,10 @@ class Aliment {
         return $this->pdo->lastInsertId();
     }
 
-    // READ ALL avec jointure sur categorie_alimentaire
+    // READ ALL
     public function listerTout() {
         $stmt = $this->pdo->query(
-            "SELECT a.*, c.nom AS nom_categorie 
-             FROM aliment a 
-             INNER JOIN categorie_alimentaire c ON a.id_categorie = c.id_categorie 
-             ORDER BY a.nom"
+            "SELECT * FROM aliment ORDER BY nom"
         );
         return $stmt->fetchAll();
     }
@@ -39,26 +36,23 @@ class Aliment {
     // READ ONE
     public function getById($id) {
         $stmt = $this->pdo->prepare(
-            "SELECT a.*, c.nom AS nom_categorie 
-             FROM aliment a 
-             INNER JOIN categorie_alimentaire c ON a.id_categorie = c.id_categorie 
-             WHERE a.id_aliment = :id"
+            "SELECT * FROM aliment WHERE id_aliment = :id"
         );
         $stmt->execute([':id' => $id]);
         return $stmt->fetch();
     }
 
     // UPDATE
-    public function modifier($id, $nom, $id_categorie, $kcal_portion, $co2_impact, $est_bio, $est_local) {
+    public function modifier($id, $nom, $categorie, $kcal_portion, $co2_impact, $est_bio, $est_local) {
         $stmt = $this->pdo->prepare(
-            "UPDATE aliment SET nom = :nom, id_categorie = :id_categorie, kcal_portion = :kcal_portion, 
+            "UPDATE aliment SET nom = :nom, categorie = :categorie, kcal_portion = :kcal_portion, 
              co2_impact = :co2_impact, est_bio = :est_bio, est_local = :est_local 
              WHERE id_aliment = :id"
         );
         return $stmt->execute([
             ':id' => $id,
             ':nom' => $nom,
-            ':id_categorie' => $id_categorie,
+            ':categorie' => $categorie,
             ':kcal_portion' => $kcal_portion,
             ':co2_impact' => $co2_impact,
             ':est_bio' => $est_bio,

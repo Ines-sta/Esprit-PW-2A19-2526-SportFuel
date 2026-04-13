@@ -55,7 +55,7 @@ git clone https://github.com/Ines-sta/Esprit-PW-2A19-2526-SportFuel.git
    - **Mot de passe** : *(laisser vide)*
 3. Cliquez sur **« Nouvelle base de données »** dans le panneau de gauche.
 4. Nommez la base **`sportfuel`** et cliquez sur **Créer**.
-5. Sélectionnez la base `sportfuel`, puis cliquez sur l'onglet **SQL**.
+
    ```
 
 ### 4. Accéder à l'application
@@ -63,7 +63,6 @@ git clone https://github.com/Ines-sta/Esprit-PW-2A19-2526-SportFuel.git
 | Page | URL |
 |---|---|
 | **Back Office — Aliments** | http://localhost/Esprit-PW-2A19-2526-SportFuel/BackOffice/controllers/aliment_controller.php |
-| **Back Office — Catégories** | http://localhost/Esprit-PW-2A19-2526-SportFuel/BackOffice/controllers/categorie_controller.php |
 | **Front Office — Catalogue** | http://localhost/Esprit-PW-2A19-2526-SportFuel/FrontOffice/controllers/aliment_controller.php |
 
 ## Structure du projet
@@ -75,23 +74,27 @@ Esprit-PW-2A19-2526-SportFuel/
 │   │   └── css/
 │   │       └── style.css
 │   ├── controllers/
+│   │   └── aliment_controller.php
 │   ├── models/
+│   │   └── Aliment.php
 │   └── views/
 │       ├── aliments/
-│       │   └── aliments.html
+│       │   └── aliments.php
 │       └── courses/
 │           └── courses.html
 ├── BackOffice/
 │   ├── assets/
-│   │   └── css/
-│   │       └── style.css
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   └── js/
+│   │       └── validation.js
 │   ├── controllers/
+│   │   └── aliment_controller.php
 │   ├── models/
+│   │   └── Aliment.php
 │   └── views/
 │       ├── aliments/
-│       │   └── aliments.html
-│       ├── categories/
-│       │   └── categories.html
+│       │   └── aliments.php
 │       └── courses/
 │           └── courses.html
 └── README.md
@@ -104,7 +107,7 @@ Esprit-PW-2A19-2526-SportFuel/
 | Gestion des utilisateurs | Inscription, connexion, profils sportifs |
 | Plans alimentaires | Création et suivi de plans nutritionnels personnalisés |
 | Entraînements | Suivi des séances et calcul des calories brûlées |
-| **Aliments & Courses** | Catalogue d'aliments bio/locaux, recherche, filtrage, génération de listes de courses, gestion des catégories alimentaires |
+| **Aliments & Courses** | Catalogue d'aliments bio/locaux avec catégorie, calories, impact CO₂, génération de listes de courses |
 | Espace coach | Supervision des sportifs par les coachs |
 
 ## Membres du groupe
@@ -240,7 +243,6 @@ Pour intégrer le template SportFuel dans votre module, suivez ces étapes :
            <li><a href="#"><span class="icon">🍽️</span> Plans alimentaires</a></li>
            <li><a href="#"><span class="icon">🏋️</span> Entraînements</a></li>
            <li><a href="../aliments/aliments.html"><span class="icon">🥗</span> Aliments & courses</a></li>
-           <li><a href="../categories/categories.html"><span class="icon">📁</span> Catégories</a></li>
            <li><a href="../courses/courses.html"><span class="icon">🛒</span> Listes de courses</a></li>
            <li><a href="#"><span class="icon">🤝</span> Espace coach</a></li>
            <!-- Ajoutez votre lien ici avec class="active" -->

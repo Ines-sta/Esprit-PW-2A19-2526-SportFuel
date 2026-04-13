@@ -8,7 +8,7 @@
  */
 function validerFormAliment(form) {
     var nom = form.querySelector('[name="nom"]').value.trim();
-    var categorie = form.querySelector('[name="id_categorie"]').value;
+    var categorie = form.querySelector('[name="categorie"]').value.trim();
     var kcal = form.querySelector('[name="kcal_portion"]').value.trim();
     var co2 = form.querySelector('[name="co2_impact"]').value.trim();
     var erreurs = [];
@@ -21,8 +21,10 @@ function validerFormAliment(form) {
     }
 
     // Catégorie obligatoire
-    if (categorie === '' || categorie === '0') {
-        erreurs.push("Veuillez sélectionner une catégorie.");
+    if (categorie === '') {
+        erreurs.push("La catégorie est obligatoire.");
+    } else if (categorie.length > 100) {
+        erreurs.push("La catégorie ne doit pas dépasser 100 caractères.");
     }
 
     // Kcal : nombre positif

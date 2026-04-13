@@ -61,9 +61,12 @@
         <input type="text" placeholder="Rechercher un aliment..." style="flex:1;min-width:200px;padding:10px 16px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
         <select style="padding:10px 16px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
             <option value="">Toutes les catégories</option>
-            <?php foreach ($categories as $c): ?>
-            <option><?php echo htmlspecialchars($c['nom']); ?></option>
-            <?php endforeach; ?>
+            <option>Fruits</option>
+            <option>Légumes</option>
+            <option>Protéines</option>
+            <option>Céréales & Féculents</option>
+            <option>Produits laitiers</option>
+            <option>Huiles & Graisses</option>
         </select>
         <button class="btn btn-outline" type="button">🔍 Rechercher</button>
     </div>
@@ -80,13 +83,13 @@
             'Huiles & Graisses' => '🫒'
         ];
         foreach ($aliments as $a):
-            $emoji = $emojis[$a['nom_categorie']] ?? '🍽️';
+            $emoji = $emojis[$a['categorie']] ?? '🍽️';
         ?>
-        <div class="food-card" data-categorie="<?php echo htmlspecialchars($a['nom_categorie']); ?>" data-bio="<?php echo $a['est_bio']; ?>" data-local="<?php echo $a['est_local']; ?>">
+        <div class="food-card" data-categorie="<?php echo htmlspecialchars($a['categorie']); ?>" data-bio="<?php echo $a['est_bio']; ?>" data-local="<?php echo $a['est_local']; ?>">
             <div class="food-card-img"><?php echo $emoji; ?></div>
             <div class="food-card-body">
                 <h4><?php echo htmlspecialchars($a['nom']); ?></h4>
-                <p class="category"><?php echo htmlspecialchars($a['nom_categorie']); ?></p>
+                <p class="category"><?php echo htmlspecialchars($a['categorie']); ?></p>
                 <div style="display:flex;gap:6px;margin-bottom:8px;">
                     <?php if ($a['est_bio']): ?><span class="badge badge-bio">Bio</span><?php endif; ?>
                     <?php if ($a['est_local']): ?><span class="badge badge-local">Local</span><?php endif; ?>

@@ -25,7 +25,6 @@
         <li><a href="#"><span class="icon">🍽️</span> Plans alimentaires</a></li>
         <li><a href="#"><span class="icon">🏋️</span> Entraînements</a></li>
         <li><a href="/Esprit-PW-2A19-2526-SportFuel/BackOffice/controllers/aliment_controller.php" class="active"><span class="icon">🥗</span> Aliments & courses</a></li>
-        <li><a href="/Esprit-PW-2A19-2526-SportFuel/BackOffice/controllers/categorie_controller.php"><span class="icon">📁</span> Catégories</a></li>
         <li><a href="/Esprit-PW-2A19-2526-SportFuel/BackOffice/views/courses/courses.html"><span class="icon">🛒</span> Listes de courses</a></li>
         <li><a href="#"><span class="icon">🤝</span> Espace coach</a></li>
     </ul>
@@ -106,7 +105,7 @@
                     <?php foreach ($aliments as $a): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($a['nom']); ?></td>
-                        <td><?php echo htmlspecialchars($a['nom_categorie']); ?></td>
+                        <td><?php echo htmlspecialchars($a['categorie']); ?></td>
                         <td><?php echo $a['kcal_portion']; ?></td>
                         <td><?php echo $a['co2_impact']; ?></td>
                         <td><?php echo $a['est_bio'] ? '<span class="badge badge-bio">Bio</span>' : '—'; ?></td>
@@ -135,12 +134,7 @@
                 </div>
                 <div class="form-group">
                     <label>Catégorie</label>
-                    <select name="id_categorie" id="ajout_categorie">
-                        <option value="">— Sélectionner —</option>
-                        <?php foreach ($categories as $c): ?>
-                        <option value="<?php echo $c['id_categorie']; ?>"><?php echo htmlspecialchars($c['nom']); ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <input type="text" name="categorie" placeholder="Ex: Fruits, Légumes, Protéines..." id="ajout_categorie">
                 </div>
             </div>
             <div class="form-row">
@@ -186,12 +180,7 @@
                 </div>
                 <div class="form-group">
                     <label>Catégorie</label>
-                    <select name="id_categorie">
-                        <option value="">— Sélectionner —</option>
-                        <?php foreach ($categories as $c): ?>
-                        <option value="<?php echo $c['id_categorie']; ?>" <?php echo $c['id_categorie'] == $alimentEdit['id_categorie'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($c['nom']); ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <input type="text" name="categorie" value="<?php echo htmlspecialchars($alimentEdit['categorie']); ?>">
                 </div>
             </div>
             <div class="form-row">
