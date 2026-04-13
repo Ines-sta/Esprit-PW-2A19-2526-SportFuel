@@ -34,17 +34,37 @@ Application web de nutrition intelligente pour sportifs, développée dans le ca
 
 ## Installation
 
-1. Clonez le repository :
-   ```bash
-   git clone https://github.com/Ines-sta/Esprit-PW-2A19-2526-SportFuel.git
-   cd Esprit-PW-2A19-2526-SportFuel
+### 1. Cloner le projet
+
+```bash
+git clone https://github.com/Ines-sta/Esprit-PW-2A19-2526-SportFuel.git
+```
+
+### 2. Configurer WAMP
+
+1. **Installer WAMP** : Téléchargez et installez [WampServer](https://www.wampserver.com/) si ce n'est pas déjà fait.
+2. **Placer le projet dans WAMP** : Copiez le dossier `Esprit-PW-2A19-2526-SportFuel` dans `C:\wamp64\www\`.
+3. **Démarrer WAMP** : Lancez WampServer. L'icône dans la barre des tâches doit être **verte** (Apache + MySQL actifs).
+   - Si l'icône est **orange** ou **rouge**, faites clic gauche → *Redémarrer les services*.
+
+### 3. Créer la base de données via phpMyAdmin
+
+1. Ouvrez votre navigateur et accédez à **http://localhost/phpmyadmin** (ou `http://localhost/phpmyadmin5.2.3/` selon votre version).
+2. Connectez-vous avec :
+   - **Utilisateur** : `root`
+   - **Mot de passe** : *(laisser vide)*
+3. Cliquez sur **« Nouvelle base de données »** dans le panneau de gauche.
+4. Nommez la base **`sportfuel`** et cliquez sur **Créer**.
+5. Sélectionnez la base `sportfuel`, puis cliquez sur l'onglet **SQL**.
    ```
 
-2. Si vous utilisez WAMP ou XAMPP :
+### 4. Accéder à l'application
 
-   * Placez le projet dans le dossier `www` (WAMP) ou `htdocs` (XAMPP).
-   * Démarrez Apache et MySQL depuis l'interface de WAMP/XAMPP.
-   * Accédez au projet via `http://localhost/Esprit-PW-2A19-2526-SportFuel`.
+| Page | URL |
+|---|---|
+| **Back Office — Aliments** | http://localhost/Esprit-PW-2A19-2526-SportFuel/BackOffice/controllers/aliment_controller.php |
+| **Back Office — Catégories** | http://localhost/Esprit-PW-2A19-2526-SportFuel/BackOffice/controllers/categorie_controller.php |
+| **Front Office — Catalogue** | http://localhost/Esprit-PW-2A19-2526-SportFuel/FrontOffice/controllers/aliment_controller.php |
 
 ## Structure du projet
 
