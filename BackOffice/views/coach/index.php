@@ -1,97 +1,16 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../../config.php';
+require_once __DIR__ . '/../../../controllers/CoachController.php';
 
-// --- GESTION DES POST (AJOUTS CRUD) ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // --- CRUD PUBLICATION ---
-    
-    // Les publications sont ajoutées uniquement par les clients via le FrontOffice.
+$controller = new CoachController();
+$controller->handlePost();
+$data = $controller->getData();
 
-    // Modifier une publication
-    if (isset($_POST['action']) && $_POST['action'] === 'edit_pub') {
-        $stmt = $pdo->prepare("UPDATE publication SET text = ? WHERE id_pub = ?");
-        $stmt->execute([$_POST['text'], $_POST['id_pub']]);
-        header("Location: index.php");
-        exit;
-    }
-
-    // Supprimer une publication
-    if (isset($_POST['action']) && $_POST['action'] === 'delete_pub') {
-        $stmt = $pdo->prepare("DELETE FROM publication WHERE id_pub = ?");
-        $stmt->execute([$_POST['id_pub']]);
-        header("Location: index.php");
-        exit;
-    }
-    
-    // --- CRUD COMMENTAIRE ---
-
-    // Ajouter un commentaire manuellement
-    if (isset($_POST['action']) && $_POST['action'] === 'add_comment_manual') {
-        $stmt = $pdo->prepare("INSERT INTO commentaire (id_pub, text, date) VALUES (?, ?, NOW())");
-        $stmt->execute([$_POST['id_pub'], $_POST['text']]);
-        header("Location: index.php");
-        exit;
-    }
-
-    // Ajouter un commentaire (Répondre)
-    if (isset($_POST['action']) && $_POST['action'] === 'add_comment') {
-        $stmt = $pdo->prepare("INSERT INTO commentaire (id_pub, text, date) VALUES (?, ?, NOW())");
-        $stmt->execute([$_POST['id_pub'], $_POST['text']]);
-        header("Location: index.php");
-        exit;
-    }
-
-    // Modifier un commentaire
-    if (isset($_POST['action']) && $_POST['action'] === 'edit_comment') {
-        $stmt = $pdo->prepare("UPDATE commentaire SET text = ?, date = NOW() WHERE id_cmmnt = ?");
-        $stmt->execute([$_POST['text'], $_POST['id_cmmnt']]);
-        header("Location: index.php");
-        exit;
-    }
-
-    // Supprimer un commentaire
-    if (isset($_POST['action']) && $_POST['action'] === 'delete_comment') {
-        $stmt = $pdo->prepare("DELETE FROM commentaire WHERE id_cmmnt = ?");
-        $stmt->execute([$_POST['id_cmmnt']]);
-        header("Location: index.php");
-        exit;
-    }
-}
-
-// Initialisations
-$publications = [];
-$commentaires = [];
-$users = [];
-
-try {
-    // Récupérer les utilisateurs (pour le select)
-    $stmt_users = $pdo->query("SELECT user_id, prenom, nom, email FROM User");
-    if ($stmt_users) {
-        $users = $stmt_users->fetchAll();
-    }
-
-    // Récupérer les publications
-    $sql_pubs = "SELECT p.*, u.nom, u.prenom, u.email 
-                 FROM publication p 
-                 LEFT JOIN User u ON p.id_user = u.user_id 
-                 ORDER BY p.date DESC";
-    $stmt_pubs = $pdo->query($sql_pubs);
-    if ($stmt_pubs) {
-        $publications = $stmt_pubs->fetchAll();
-    }
-
-    // Récupérer les commentaires
-    $sql_comments = "SELECT c.*, p.text as pub_text 
-                     FROM commentaire c
-                     JOIN publication p ON c.id_pub = p.id_pub
-                     ORDER BY c.date DESC";
-    $stmt_comments = $pdo->query($sql_comments);
-    if ($stmt_comments) {
-        $commentaires = $stmt_comments->fetchAll();
-    }
-} catch (PDOException $e) {
-    $db_error = "Veuillez initialiser la base de données (setup_db.php). Erreur : " . $e->getMessage();
-}
+$publications = $data['publications'];
+$commentaires = $data['commentaires'];
+$users = $data['users'];
+$db_error = $data['db_error'];
 
 setlocale(LC_TIME, 'fr_FR.UTF8', 'fr.UTF8', 'fr_FR.UTF-8', 'fr_FR');
 $date_jour = date('l j F Y');
@@ -137,7 +56,14 @@ $date_jour = date('l j F Y');
         <span class="date"><?php echo htmlspecialchars($date_jour); ?></span>
     </div>
 
-    <?php if (isset($db_error)): ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <script>
+            alert("Erreur : <?php echo addslashes($_SESSION['error']); ?>");
+        </script>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+
+    <?php if ($db_error): ?>
         <div style="background: #fee2e2; color: #dc2626; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
             <strong>Information :</strong> <?php echo $db_error; ?>
         </div>
@@ -236,8 +162,6 @@ $date_jour = date('l j F Y');
 
 <!-- ================= MODALS PUBLICATION ================= -->
 
-
-
 <!-- Modal Editer Publication -->
 <div class="modal-overlay" id="modal-edit-pub">
     <div class="modal">
@@ -247,7 +171,7 @@ $date_jour = date('l j F Y');
             <input type="hidden" name="id_pub" id="edit-pub-id" value="">
             <div class="form-group">
                 <label>Nouveau Message</label>
-                <textarea name="text" id="edit-pub-text" rows="4" minlength="5" maxlength="1000" required></textarea>
+                <textarea name="text" id="edit-pub-text" rows="4"></textarea>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline" onclick="closeModal('modal-edit-pub')">Annuler</button>
@@ -267,7 +191,7 @@ $date_jour = date('l j F Y');
             <input type="hidden" name="action" value="add_comment_manual">
             <div class="form-group">
                 <label>Publication Réf.</label>
-                <select name="id_pub" required>
+                <select name="id_pub">
                     <option value="">-- Sélectionner une publication --</option>
                     <?php foreach($publications as $p): ?>
                         <option value="<?php echo $p['id_pub']; ?>">Pub #<?php echo $p['id_pub']; ?> - <?php echo substr($p['text'], 0, 30); ?>...</option>
@@ -276,7 +200,7 @@ $date_jour = date('l j F Y');
             </div>
             <div class="form-group">
                 <label>Votre Réponse</label>
-                <textarea name="text" rows="4" minlength="5" maxlength="1000" required></textarea>
+                <textarea name="text" rows="4"></textarea>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline" onclick="closeModal('modal-add-comment-manual')">Annuler</button>
@@ -295,7 +219,7 @@ $date_jour = date('l j F Y');
             <input type="hidden" name="id_pub" id="reply-id-pub" value="">
             <div class="form-group">
                 <label>Votre Réponse</label>
-                <textarea name="text" rows="4" placeholder="Écrivez votre réponse ici..." minlength="5" maxlength="1000" required></textarea>
+                <textarea name="text" rows="4" placeholder="Écrivez votre réponse ici..."></textarea>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline" onclick="closeModal('modal-reply')">Annuler</button>
@@ -314,7 +238,7 @@ $date_jour = date('l j F Y');
             <input type="hidden" name="id_cmmnt" id="edit-id-cmmnt" value="">
             <div class="form-group">
                 <label>Modifier votre Réponse</label>
-                <textarea name="text" id="edit-text" rows="4" minlength="5" maxlength="1000" required></textarea>
+                <textarea name="text" id="edit-text" rows="4"></textarea>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline" onclick="closeModal('modal-edit')">Annuler</button>
@@ -331,6 +255,72 @@ $date_jour = date('l j F Y');
     function closeModal(id) {
         document.getElementById(id).classList.remove('active');
     }
+
+    // Validation functions
+    function validateText(text, maxLength) {
+        if (!text.trim()) {
+            return "Le champ ne peut pas être vide.";
+        }
+        if (text.length > maxLength) {
+            return "Le texte ne peut pas dépasser " + maxLength + " caractères.";
+        }
+        return null;
+    }
+
+    // Attach validation to forms
+    document.addEventListener('DOMContentLoaded', function() {
+        // Edit pub form
+        const editPubForm = document.querySelector('#modal-edit-pub form');
+        if (editPubForm) {
+            editPubForm.addEventListener('submit', function(e) {
+                const text = document.getElementById('edit-pub-text').value;
+                const error = validateText(text, 500);
+                if (error) {
+                    alert(error);
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // Add comment manual form
+        const addCommentForm = document.querySelector('#modal-add-comment-manual form');
+        if (addCommentForm) {
+            addCommentForm.addEventListener('submit', function(e) {
+                const text = addCommentForm.querySelector('textarea[name="text"]').value;
+                const error = validateText(text, 200);
+                if (error) {
+                    alert(error);
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // Reply form
+        const replyForm = document.querySelector('#modal-reply form');
+        if (replyForm) {
+            replyForm.addEventListener('submit', function(e) {
+                const text = replyForm.querySelector('textarea[name="text"]').value;
+                const error = validateText(text, 200);
+                if (error) {
+                    alert(error);
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // Edit comment form
+        const editCommentForm = document.querySelector('#modal-edit form');
+        if (editCommentForm) {
+            editCommentForm.addEventListener('submit', function(e) {
+                const text = document.getElementById('edit-text').value;
+                const error = validateText(text, 200);
+                if (error) {
+                    alert(error);
+                    e.preventDefault();
+                }
+            });
+        }
+    });
 
     // Handlers Publication
     function openEditPubModal(id_pub, text) {

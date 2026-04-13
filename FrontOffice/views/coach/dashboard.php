@@ -1,53 +1,15 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../../config.php';
+require_once __DIR__ . '/../../../controllers/FrontOfficeController.php';
 
-// Simuler qu'un sportif est connecté
-$sportif_id = 3;
+$controller = new FrontOfficeController();
+$controller->handlePost();
+$data = $controller->getData();
 
-// --- GESTION POST FRONT-OFFICE ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action']) && $_POST['action'] === 'add_pub') {
-        $stmt = $pdo->prepare("INSERT INTO publication (id_user, text, date) VALUES (?, ?, NOW())");
-        $stmt->execute([$sportif_id, $_POST['text']]);
-        header("Location: dashboard.php");
-        exit;
-    }
-    if (isset($_POST['action']) && $_POST['action'] === 'edit_pub') {
-        $stmt = $pdo->prepare("UPDATE publication SET text = ? WHERE id_pub = ? AND id_user = ?");
-        $stmt->execute([$_POST['text'], $_POST['id_pub'], $sportif_id]);
-        header("Location: dashboard.php");
-        exit;
-    }
-    if (isset($_POST['action']) && $_POST['action'] === 'delete_pub') {
-        $stmt = $pdo->prepare("DELETE FROM publication WHERE id_pub = ? AND id_user = ?");
-        $stmt->execute([$_POST['id_pub'], $sportif_id]);
-        header("Location: dashboard.php");
-        exit;
-    }
-}
-
-// Récupération Profil
-$current_user = null;
-try {
-    $stmt_user = $pdo->prepare("SELECT prenom, nom FROM User WHERE user_id = ?");
-    $stmt_user->execute([$sportif_id]);
-    $current_user = $stmt_user->fetch();
-
-    // Récupérer publications
-    $publications = [];
-    $stmt_pubs = $pdo->prepare("SELECT * FROM publication WHERE id_user = ? ORDER BY date DESC");
-    $stmt_pubs->execute([$sportif_id]);
-    $pubs = $stmt_pubs->fetchAll();
-    
-    foreach($pubs as $p) {
-        $stmt_c = $pdo->prepare("SELECT * FROM commentaire WHERE id_pub = ? ORDER BY date ASC");
-        $stmt_c->execute([$p['id_pub']]);
-        $p['commentaires'] = $stmt_c->fetchAll();
-        $publications[] = $p;
-    }
-} catch (PDOException $e) {
-    $db_error = "Base de données non initialisée.";
-}
+$current_user = $data['current_user'];
+$publications = $data['publications'];
+$db_error = $data['db_error'];
 
 ?>
 <!DOCTYPE html>
@@ -102,12 +64,24 @@ try {
         <p>Laissez vos messages, remarques ou notes. Les administrateurs / coachs vous répondront directement ici.</p>
     </div>
 
+    <?php if (isset($_SESSION['error'])): ?>
+        <div style="background: #fee2e2; color: #dc2626; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <strong>Erreur :</strong> <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($db_error): ?>
+        <div style="background: #fee2e2; color: #dc2626; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <strong>Information :</strong> <?php echo $db_error; ?>
+        </div>
+    <?php endif; ?>
+
     <!-- Espace pour ajouter une publication -->
     <div class="pub-card" style="background:#f1fdf4; border: 1px solid #dcf5e3;">
         <h3>📮 Nouvelle Demande</h3>
         <form action="dashboard.php" method="POST">
             <input type="hidden" name="action" value="add_pub">
-            <textarea name="text" class="form-message" rows="3" placeholder="Écrivez votre message ici..." minlength="5" maxlength="1000" required></textarea>
+            <textarea name="text" class="form-message" rows="3" placeholder="Écrivez votre message ici..."></textarea>
             <button type="submit" class="btn btn-success">Publier</button>
         </form>
     </div>
@@ -170,7 +144,7 @@ try {
             <input type="hidden" name="action" value="edit_pub">
             <input type="hidden" name="id_pub" id="edit-pub-id" value="">
             
-            <textarea name="text" id="edit-pub-text" class="form-message" rows="4" minlength="5" maxlength="1000" required></textarea>
+            <textarea name="text" id="edit-pub-text" class="form-message" rows="4"></textarea>
             
             <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:15px;">
                 <button type="button" class="btn btn-outline" onclick="closeModal('modal-edit-pub')">Annuler</button>
@@ -189,6 +163,37 @@ try {
     function closeModal(id) {
         document.getElementById(id).classList.remove('active');
     }
+
+    // Validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const addForm = document.querySelector('form[action="dashboard.php"]');
+        if (addForm) {
+            addForm.addEventListener('submit', function(e) {
+                const text = addForm.querySelector('textarea[name="text"]').value;
+                if (!text.trim()) {
+                    alert("Le message ne peut pas être vide.");
+                    e.preventDefault();
+                } else if (text.length > 500) {
+                    alert("Le message ne peut pas dépasser 500 caractères.");
+                    e.preventDefault();
+                }
+            });
+        }
+
+        const editForm = document.querySelector('#modal-edit-pub form');
+        if (editForm) {
+            editForm.addEventListener('submit', function(e) {
+                const text = document.getElementById('edit-pub-text').value;
+                if (!text.trim()) {
+                    alert("Le message ne peut pas être vide.");
+                    e.preventDefault();
+                } else if (text.length > 500) {
+                    alert("Le message ne peut pas dépasser 500 caractères.");
+                    e.preventDefault();
+                }
+            });
+        }
+    });
 </script>
 
 <div class="footer">
