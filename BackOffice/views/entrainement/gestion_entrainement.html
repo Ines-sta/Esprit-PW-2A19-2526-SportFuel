@@ -85,6 +85,74 @@
         </table>
     </div>
 </div>
-
+<script>
+    function filterPrograms() {
+        const niveauFilter = document.querySelector('.filter-item:first-child select')?.value || 'Tous';
+        const statutFilter = document.querySelector('.filter-item:nth-child(2) select')?.value || 'Tous';
+        const rows = document.querySelectorAll('.table-wrapper tbody tr');
+        
+        rows.forEach(row => {
+            const niveau = row.cells[3]?.innerText || '';
+            const statutSpan = row.cells[6]?.querySelector('span');
+            const statut = statutSpan ? statutSpan.innerText : '';
+            
+            let matchNiveau = (niveauFilter === 'Tous' || niveau === niveauFilter);
+            let matchStatut = (statutFilter === 'Tous' || statut === statutFilter);
+            
+            row.style.display = (matchNiveau && matchStatut) ? '' : 'none';
+        });
+    }
+    
+    function resetFilters() {
+        const niveauSelect = document.querySelector('.filter-item:first-child select');
+        const statutSelect = document.querySelector('.filter-item:nth-child(2) select');
+        
+        if (niveauSelect) niveauSelect.value = 'Tous';
+        if (statutSelect) statutSelect.value = 'Tous';
+        
+        const rows = document.querySelectorAll('.table-wrapper tbody tr');
+        rows.forEach(row => row.style.display = '');
+    }
+    
+    function confirmDeleteProgram(id) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce programme ?')) {
+            window.location.href = 'ProgrammeController.php?action=delete&id=' + id;
+        }
+    }
+    
+    function editProgram(id) {
+        window.location.href = 'ProgrammeController.php?action=edit&id=' + id;
+    }
+    
+    function toggleStatut(id, currentStatut) {
+        const newStatut = (currentStatut === 'Actif') ? 'Inactif' : 'Actif';
+        if (confirm('Changer le statut du programme ?')) {
+            window.location.href = 'ProgrammeController.php?action=toggle&id=' + id + '&statut=' + newStatut;
+        }
+    }
+    
+    // Ajouter une barre de filtres si elle n'existe pas
+    const topbar = document.querySelector('.topbar');
+    if (topbar && !document.querySelector('.filters-bar')) {
+        const filtersHtml = `
+            <div class="filters-bar" style="display: flex; gap: 16px; margin: 20px 0; align-items: flex-end;">
+                <div class="filter-item"><label>Niveau</label><select><option>Tous</option><option>Débutant</option><option>Intermédiaire</option><option>Avancé</option></select></div>
+                <div class="filter-item"><label>Statut</label><select><option>Tous</option><option>Actif</option><option>Inactif</option></select></div>
+                <div class="filter-item"><button class="btn btn-primary" onclick="filterPrograms()">🔍 Filtrer</button></div>
+                <div class="filter-item"><button class="btn btn-secondary" onclick="resetFilters()">Reset</button></div>
+            </div>
+        `;
+        topbar.insertAdjacentHTML('afterend', filtersHtml);
+    }
+    
+    // Récupérer les messages depuis l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success')) {
+        alert('✅ ' + decodeURIComponent(urlParams.get('success')));
+    }
+    if (urlParams.get('error')) {
+        alert('❌ ' + decodeURIComponent(urlParams.get('error')));
+    }
+</script>
 </body>
 </html>

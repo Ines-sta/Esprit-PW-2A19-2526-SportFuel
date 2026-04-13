@@ -6,7 +6,7 @@
     <title>SportFuel — Historique des entraînements</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="../../assets/css/entrainement.css">
-
+    <script src="../../assets/js/api.js"></script>
 </head>
 <body>
 
@@ -36,10 +36,10 @@
 
     <!-- Résumé statistique -->
     <div class="stat-summary">
-        <div class="card"><strong>24</strong><br>séances totales</div>
-        <div class="card"><strong>8</strong><br>ce mois</div>
-        <div class="card"><strong>2 450 kcal</strong><br>calories brûlées</div>
-        <div class="card"><strong>4.7/5</strong><br>moyenne ressenti</div>
+        <div class="card"><strong id="totalSessions">0</strong><br>séances totales</div>
+        <div class="card"><strong id="monthSessions">0</strong><br>ce mois</div>
+        <div class="card"><strong id="totalCalories">0 kcal</strong><br>calories brûlées</div>
+        <div class="card"><strong id="avgRating">0/5</strong><br>moyenne ressenti</div>
     </div>
 
     <!-- Barre de filtres -->
@@ -83,16 +83,10 @@
     <div class="table-container">
         <table>
             <thead>
-                <tr><th>Date</th><th>Type</th><th>Durée</th><th>Intensité</th><th>Calories</th><th>Distance</th><th>Ressenti</th></tr>
+                <tr><th>Date</th><th>Type</th><th>Durée</th><th>Statut</th><th>Calories</th><th>Notes</th></tr>
             </thead>
-            <tbody>
-                <tr><td>07/04/2026</td><td>Musculation</td><td>55 min</td><td><span class="badge badge-elevee">Élevée</span></td><td>420</td><td>—</td><td>⭐⭐⭐⭐⭐</td></tr>
-                <tr><td>05/04/2026</td><td>Course à pied</td><td>35 min</td><td><span class="badge badge-moderée">Modérée</span></td><td>280</td><td>5.2 km</td><td>⭐⭐⭐⭐</td></tr>
-                <tr><td>04/04/2026</td><td>Yoga</td><td>45 min</td><td><span class="badge badge-faible">Faible</span></td><td>150</td><td>—</td><td>⭐⭐⭐⭐⭐</td></tr>
-                <tr><td>02/04/2026</td><td>Natation</td><td>40 min</td><td><span class="badge badge-moderée">Modérée</span></td><td>350</td><td>1.5 km</td><td>⭐⭐⭐⭐</td></tr>
-                <tr><td>30/03/2026</td><td>Musculation</td><td>60 min</td><td><span class="badge badge-elevee">Élevée</span></td><td>480</td><td>—</td><td>⭐⭐⭐⭐⭐</td></tr>
-                <tr><td>28/03/2026</td><td>Vélo</td><td>50 min</td><td><span class="badge badge-moderée">Modérée</span></td><td>300</td><td>15 km</td><td>⭐⭐⭐</td></tr>
-                <tr><td>25/03/2026</td><td>Cardio</td><td>30 min</td><td><span class="badge badge-faible">Faible</span></td><td>180</td><td>—</td><td>⭐⭐⭐⭐</td></tr>
+            <tbody id="trainingTableBody">
+                <tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Chargement...</td></tr>
             </tbody>
         </table>
     </div>
@@ -115,6 +109,321 @@
 <div class="footer">
     &copy; 2026 SportFuel — Nutrition intelligente pour sportifs
 </div>
+<script>
+    let allTrainings = [];
 
+    // Charger les entraînements
+    async function loadTrainings() {
+        allTrainings = await getAllEntrainements();
+        displayTrainings(allTrainings);
+        updateStatistics();
+    }
+
+    // Afficher les entraînements dans le tableau
+    function displayTrainings(trainings) {
+        const tableBody = document.getElementById('trainingTableBody');
+
+        if (trainings.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Aucun entraînement enregistré</td></tr>';
+            return;
+        }
+
+        tableBody.innerHTML = trainings.map(training => {
+            const date = new Date(training.date_entrainement).toLocaleDateString('fr-FR');
+            const calories = training.duree_totale * 7; // Approximation
+            const notes = training.notes_globales ? training.notes_globales.substring(0, 30) + '...' : '—';
+
+            return `
+                <tr>
+                    <td>${date}</td>
+                    <td>${training.titre}</td>
+                    <td>${training.duree_totale} min</td>
+                    <td><span class="badge badge-moderée">${training.statut}</span></td>
+                    <td>${calories} kcal</td>
+                    <td>${notes}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // Mettre à jour les statistiques
+    function updateStatistics() {
+        const totalSessions = allTrainings.length;
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        const monthSessions = allTrainings.filter(t => {
+            const trainDate = new Date(t.date_entrainement);
+            return trainDate.getMonth() === currentMonth && trainDate.getFullYear() === currentYear;
+        }).length;
+
+        const totalCalories = allTrainings.reduce((sum, t) => sum + (t.duree_totale * 7), 0);
+        const avgRating = (totalSessions > 0) ? (4.5).toFixed(1) : '0';
+
+        document.getElementById('totalSessions').textContent = totalSessions;
+        document.getElementById('monthSessions').textContent = monthSessions;
+        document.getElementById('totalCalories').textContent = totalCalories + ' kcal';
+        document.getElementById('avgRating').textContent = avgRating + '/5';
+    }
+
+    // Filtrer le tableau
+    function filterTable() {
+        const typeFilter = document.querySelector('.filter-group:first-child select')?.value || 'Tous';
+        const intensiteFilter = document.querySelector('.filter-group:nth-child(2) select')?.value || 'Toutes';
+
+        const filtered = allTrainings.filter(training => {
+            return (typeFilter === 'Tous' || training.titre === typeFilter) &&
+                   (intensiteFilter === 'Toutes' || training.statut === intensiteFilter);
+        });
+
+        displayTrainings(filtered);
+    }
+
+    // Réinitialiser les filtres
+    function resetFilters() {
+        const typeSelect = document.querySelector('.filter-group:first-child select');
+        const intensiteSelect = document.querySelector('.filter-group:nth-child(2) select');
+        const periodeSelect = document.querySelector('.filter-group:nth-child(3) select');
+
+        if (typeSelect) typeSelect.value = 'Tous';
+        if (intensiteSelect) intensiteSelect.value = 'Toutes';
+        if (periodeSelect) periodeSelect.value = 'Ce mois';
+
+        displayTrainings(allTrainings);
+    }
+
+    // Attacher les événements
+    const filterBtn = document.querySelector('.btn-filter');
+    if (filterBtn) filterBtn.onclick = filterTable;
+
+    // Ajouter bouton reset s'il n'existe pas
+    const filterBar = document.querySelector('.filter-bar');
+    if (filterBar && !document.querySelector('.btn-reset')) {
+        const resetBtn = document.createElement('button');
+        resetBtn.textContent = 'Reset';
+        resetBtn.className = 'btn btn-secondary btn-reset';
+        resetBtn.onclick = resetFilters;
+        resetBtn.type = 'button';
+        filterBar.appendChild(resetBtn);
+    }
+
+    // Charger les données au démarrage
+    loadTrainings();
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportFuel — Historique des entraînements</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/entrainement.css">
+    <script src="../../assets/js/api.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="#" class="navbar-brand">
+        <div class="navbar-logo">SF</div>
+        <span>Sport<em>Fuel</em></span>
+    </a>
+    <ul class="navbar-links">
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Mon plan</a></li>
+        <li><a href="#" class="active">Entraînements</a></li>
+        <li><a href="../courses/courses.html">Courses</a></li>
+        <li><a href="../aliments/aliments.html">Aliments</a></li>
+    </ul>
+    <div class="navbar-user">IN</div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <!-- En-tête -->
+    <div class="page-header">
+        <h1 class="page-title">📜 Historique des entraînements</h1>
+        <p class="page-description">Consultez toutes vos séances passées et suivez votre progression</p>
+    </div>
+
+    <!-- Résumé statistique -->
+    <div class="stat-summary">
+        <div class="card"><strong id="totalSessions">0</strong><br>séances totales</div>
+        <div class="card"><strong id="monthSessions">0</strong><br>ce mois</div>
+        <div class="card"><strong id="totalCalories">0 kcal</strong><br>calories brûlées</div>
+        <div class="card"><strong id="avgRating">0/5</strong><br>moyenne ressenti</div>
+    </div>
+
+    <!-- Barre de filtres -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label>Type d'entraînement</label>
+            <select>
+                <option>Tous</option>
+                <option>Musculation</option>
+                <option>Cardio</option>
+                <option>Course à pied</option>
+                <option>Natation</option>
+                <option>Yoga</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Intensité</label>
+            <select>
+                <option>Toutes</option>
+                <option>Faible</option>
+                <option>Modérée</option>
+                <option>Élevée</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Période</label>
+            <select>
+                <option>Ce mois</option>
+                <option>3 derniers mois</option>
+                <option>2026</option>
+                <option>Tout</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>&nbsp;</label>
+            <button class="btn btn-primary btn-filter">🔍 Filtrer</button>
+        </div>
+    </div>
+
+    <!-- Tableau historique -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr><th>Date</th><th>Type</th><th>Durée</th><th>Statut</th><th>Calories</th><th>Notes</th></tr>
+            </thead>
+            <tbody id="trainingTableBody">
+                <tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Chargement...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Graphique progression -->
+    <div class="card section-card">
+        <div class="card-header">📈 Progression mensuelle (calories brûlées)</div>
+        <div class="section-card-content">
+            <div class="progress-bar">
+                <div class="progress-bar-fill"></div>
+            </div>
+            <div class="progress-labels">
+                <span>Sem 1</span><span>Sem 2</span><span>Sem 3</span><span>Sem 4</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    &copy; 2026 SportFuel — Nutrition intelligente pour sportifs
+</div>
+<script>
+    let allTrainings = [];
+
+    // Charger les entraînements
+    async function loadTrainings() {
+        allTrainings = await getAllEntrainements();
+        displayTrainings(allTrainings);
+        updateStatistics();
+    }
+
+    // Afficher les entraînements dans le tableau
+    function displayTrainings(trainings) {
+        const tableBody = document.getElementById('trainingTableBody');
+        
+        if (trainings.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #999;">Aucun entraînement enregistré</td></tr>';
+            return;
+        }
+
+        tableBody.innerHTML = trainings.map(training => {
+            const date = new Date(training.date_entrainement).toLocaleDateString('fr-FR');
+            const calories = training.duree_totale * 7; // Approximation
+            const notes = training.notes_globales ? training.notes_globales.substring(0, 30) + '...' : '—';
+            
+            return `
+                <tr>
+                    <td>${date}</td>
+                    <td>${training.titre}</td>
+                    <td>${training.duree_totale} min</td>
+                    <td><span class="badge badge-moderée">${training.statut}</span></td>
+                    <td>${calories} kcal</td>
+                    <td>${notes}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // Mettre à jour les statistiques
+    function updateStatistics() {
+        const totalSessions = allTrainings.length;
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        const monthSessions = allTrainings.filter(t => {
+            const trainDate = new Date(t.date_entrainement);
+            return trainDate.getMonth() === currentMonth && trainDate.getFullYear() === currentYear;
+        }).length;
+
+        const totalCalories = allTrainings.reduce((sum, t) => sum + (t.duree_totale * 7), 0);
+        const avgRating = (totalSessions > 0) ? (4.5).toFixed(1) : '0';
+
+        document.getElementById('totalSessions').textContent = totalSessions;
+        document.getElementById('monthSessions').textContent = monthSessions;
+        document.getElementById('totalCalories').textContent = totalCalories + ' kcal';
+        document.getElementById('avgRating').textContent = avgRating + '/5';
+    }
+
+    // Filtrer le tableau
+    function filterTable() {
+        const typeFilter = document.querySelector('.filter-group:first-child select')?.value || 'Tous';
+        const intensiteFilter = document.querySelector('.filter-group:nth-child(2) select')?.value || 'Toutes';
+        
+        const filtered = allTrainings.filter(training => {
+            return (typeFilter === 'Tous' || training.titre === typeFilter) &&
+                   (intensiteFilter === 'Toutes' || training.statut === intensiteFilter);
+        });
+
+        displayTrainings(filtered);
+    }
+
+    // Réinitialiser les filtres
+    function resetFilters() {
+        const typeSelect = document.querySelector('.filter-group:first-child select');
+        const intensiteSelect = document.querySelector('.filter-group:nth-child(2) select');
+        const periodeSelect = document.querySelector('.filter-group:nth-child(3) select');
+        
+        if (typeSelect) typeSelect.value = 'Tous';
+        if (intensiteSelect) intensiteSelect.value = 'Toutes';
+        if (periodeSelect) periodeSelect.value = 'Ce mois';
+        
+        displayTrainings(allTrainings);
+    }
+    
+    // Attacher les événements
+    const filterBtn = document.querySelector('.btn-filter');
+    if (filterBtn) filterBtn.onclick = filterTable;
+    
+    // Ajouter bouton reset s'il n'existe pas
+    const filterBar = document.querySelector('.filter-bar');
+    if (filterBar && !document.querySelector('.btn-reset')) {
+        const resetBtn = document.createElement('button');
+        resetBtn.textContent = 'Reset';
+        resetBtn.className = 'btn btn-secondary btn-reset';
+        resetBtn.onclick = resetFilters;
+        resetBtn.type = 'button';
+        filterBar.appendChild(resetBtn);
+    }
+
+    // Charger les données au démarrage
+    loadTrainings();
+</script>
 </body>
 </html>

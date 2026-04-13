@@ -6,7 +6,182 @@
     <title>SportFuel — Ajouter une séance</title>
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="../../assets/css/entrainement.css">
+    <script src="../../assets/js/api.js"></script>
+</head>
+<body>
 
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="#" class="navbar-brand">
+        <div class="navbar-logo">SF</div>
+        <span>Sport<em>Fuel</em></span>
+    </a>
+    <ul class="navbar-links">
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Mon plan</a></li>
+        <li><a href="#" class="active">Entraînements</a></li>
+        <li><a href="../courses/courses.html">Courses</a></li>
+        <li><a href="../aliments/aliments.html">Aliments</a></li>
+    </ul>
+    <div class="navbar-user">IN</div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <!-- En-tête -->
+    <div class="page-header">
+        <h1 class="page-title">🏋️ Ajouter une séance sportive</h1>
+        <p class="page-description">Enregistrez votre activité physique et suivez vos progrès</p>
+    </div>
+
+    <!-- Message d'affichage -->
+    <div id="messageContainer"></div>
+
+    <!-- Formulaire d'ajout -->
+    <div class="form-card">
+        <h2 class="section-title">📝 Nouvelle séance</h2>
+        <form id="trainingForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Type d'entraînement *</label>
+                    <select id="trainingType">
+                        <option value="">Sélectionnez</option>
+                        <option>Musculation</option>
+                        <option>Cardio</option>
+                        <option>Course à pied</option>
+                        <option>Natation</option>
+                        <option>Yoga</option>
+                        <option>Vélo</option>
+                        <option>HIIT</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date de la séance *</label>
+                    <input type="date" id="trainingDate" value="2026-04-07">
+                </div>
+                <div class="form-group">
+                    <label>Durée (minutes) *</label>
+                    <input type="text" id="trainingDuration" placeholder="45" class="number-input">
+                </div>
+                <div class="form-group">
+                    <label>Intensité</label>
+                    <select id="trainingIntensity">
+                        <option>Faible</option>
+                        <option selected>Modérée</option>
+                        <option>Élevée</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Calories estimées</label>
+                    <input type="text" id="trainingCalories" placeholder="~ 300 kcal" class="number-input">
+                </div>
+                <div class="form-group">
+                    <label>Distance (km) - optionnel</label>
+                    <input type="text" id="trainingDistance" placeholder="Ex: 5.2 km">
+                </div>
+                <div class="form-group grid-span-2">
+                    <label>Notes / ressenti</label>
+                    <textarea id="trainingNotes" rows="3" placeholder="Comment vous êtes-vous senti ? Difficultés, performances, coach..."></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn-submit">✅ Enregistrer la séance</button>
+        </form>
+    </div>
+
+    <!-- Dernière séance ajoutée -->
+    <div id="lastTrainingCard" class="info-card" style="display:none;">
+        <div class="info-card-header">
+            <div>
+                <strong>📌 Dernière séance enregistrée</strong><br>
+                <span class="info-card-text" id="lastTrainingText">Chargement...</span>
+            </div>
+            <span class="badge badge-success" id="lastTrainingCalories">+0 kcal</span>
+        </div>
+    </div>
+
+    <!-- Conseils -->
+    <div class="card section-card">
+        <div class="card-header">💡 Conseil du coach</div>
+        <div class="section-card-content">
+            <p class="text-muted">Pensez à bien vous échauffer avant chaque séance et à vous hydrater régulièrement. Notez vos sensations pour mieux suivre votre progression !</p>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    &copy; 2026 SportFuel — Nutrition intelligente pour sportifs
+</div>
+<script>
+    // Charger la dernière séance
+    async function loadLastTraining() {
+        const trainings = await getAllEntrainements();
+        if (trainings.length > 0) {
+            const lastTraining = trainings[trainings.length - 1];
+            const lastTrainingCard = document.getElementById('lastTrainingCard');
+            const lastTrainingText = document.getElementById('lastTrainingText');
+            const lastTrainingCalories = document.getElementById('lastTrainingCalories');
+
+            const date = new Date(lastTraining.date_entrainement).toLocaleDateString('fr-FR');
+            lastTrainingText.textContent = `${lastTraining.titre} - ${lastTraining.duree_totale} min - ${date}`;
+            lastTrainingCalories.textContent = `+${lastTraining.duree_totale * 7} kcal`;
+            lastTrainingCard.style.display = 'block';
+        }
+    }
+
+    // Gérer la soumission du formulaire
+    const form = document.getElementById('trainingForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Récupérer les données du formulaire
+            const typeSelect = document.getElementById('trainingType');
+            const dateInput = document.getElementById('trainingDate');
+            const durationInput = document.getElementById('trainingDuration');
+            const intensitySelect = document.getElementById('trainingIntensity');
+            const caloriesInput = document.getElementById('trainingCalories');
+            const distanceInput = document.getElementById('trainingDistance');
+            const notesTextarea = document.getElementById('trainingNotes');
+
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = '';
+
+            // Envoyer à l'API (validation côté serveur)
+            const result = await createEntrainement(
+                typeSelect.value,
+                dateInput.value,
+                durationInput.value ? parseInt(durationInput.value) : null,
+                notesTextarea.value || null
+            );
+
+            if (!result.error) {
+                messageContainer.innerHTML = '<div style="background: #d8f3dc; color: #2d6a4f; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px;">✅ Séance ajoutée avec succès !</div>';
+                form.reset();
+                form.querySelector('input[type="date"]').value = new Date().toISOString().split('T')[0];
+                loadLastTraining();
+                setTimeout(() => {
+                    messageContainer.innerHTML = '';
+                }, 5000);
+            } else {
+                messageContainer.innerHTML = '<div style="background: #fee2e2; color: #c0392b; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px;">❌ Erreur: ' + result.error + '</div>';
+            }
+        });
+    }
+
+    // Charger les données au démarrage
+    loadLastTraining();
+</script>
+</body>
+</html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportFuel — Ajouter une séance</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/entrainement.css">
+    <script src="../../assets/js/api.js"></script>
 </head>
 <body>
 
@@ -54,14 +229,17 @@
         </div>
     </div>
 
+    <!-- Message d'affichage -->
+    <div id="messageContainer"></div>
+
     <!-- Formulaire d'ajout -->
     <div class="form-card">
         <h2 class="section-title">📝 Nouvelle séance</h2>
-        <form action="#" method="post">
+        <form id="trainingForm">
             <div class="form-grid">
                 <div class="form-group">
                     <label>Type d'entraînement *</label>
-                    <select required>
+                    <select id="trainingType">
                         <option value="">Sélectionnez</option>
                         <option>Musculation</option>
                         <option>Cardio</option>
@@ -74,15 +252,16 @@
                 </div>
                 <div class="form-group">
                     <label>Date de la séance *</label>
-                    <input type="date" value="2026-04-07" required>
+                    <input type="date" id="trainingDate" value="2026-04-07">
                 </div>
                 <div class="form-group">
                     <label>Durée (minutes) *</label>
-                    <input type="number" placeholder="45" min="1" required>
+                    <input type="text" id="trainingDuration" placeholder="45" class="number-input">
+                </div>
                 </div>
                 <div class="form-group">
                     <label>Intensité</label>
-                    <select>
+                    <select id="trainingIntensity">
                         <option>Faible</option>
                         <option selected>Modérée</option>
                         <option>Élevée</option>
@@ -90,15 +269,15 @@
                 </div>
                 <div class="form-group">
                     <label>Calories estimées</label>
-                    <input type="number" placeholder="~ 300 kcal">
+                    <input type="text" id="trainingCalories" placeholder="~ 300 kcal" class="number-input">
                 </div>
                 <div class="form-group">
                     <label>Distance (km) - optionnel</label>
-                    <input type="text" placeholder="Ex: 5.2 km">
+                    <input type="text" id="trainingDistance" placeholder="Ex: 5.2 km">
                 </div>
                 <div class="form-group grid-span-2">
                     <label>Notes / ressenti</label>
-                    <textarea rows="3" placeholder="Comment vous êtes-vous senti ? Difficultés, performances, coach..."></textarea>
+                    <textarea id="trainingNotes" rows="3" placeholder="Comment vous êtes-vous senti ? Difficultés, performances, coach..."></textarea>
                 </div>
             </div>
             <button type="submit" class="btn-submit">✅ Enregistrer la séance</button>
@@ -106,13 +285,13 @@
     </div>
 
     <!-- Dernière séance ajoutée -->
-    <div class="info-card">
+    <div id="lastTrainingCard" class="info-card" style="display:none;">
         <div class="info-card-header">
             <div>
                 <strong>📌 Dernière séance enregistrée</strong><br>
-                <span class="info-card-text">Musculation - 55 min - 06/04/2026</span>
+                <span class="info-card-text" id="lastTrainingText">Chargement...</span>
             </div>
-            <span class="badge badge-success">+420 kcal</span>
+            <span class="badge badge-success" id="lastTrainingCalories">+0 kcal</span>
         </div>
     </div>
 
@@ -129,6 +308,65 @@
 <div class="footer">
     &copy; 2026 SportFuel — Nutrition intelligente pour sportifs
 </div>
+<script>
+    // Charger la dernière séance
+    async function loadLastTraining() {
+        const trainings = await getAllEntrainements();
+        if (trainings.length > 0) {
+            const lastTraining = trainings[trainings.length - 1];
+            const lastTrainingCard = document.getElementById('lastTrainingCard');
+            const lastTrainingText = document.getElementById('lastTrainingText');
+            const lastTrainingCalories = document.getElementById('lastTrainingCalories');
+            
+            const date = new Date(lastTraining.date_entrainement).toLocaleDateString('fr-FR');
+            lastTrainingText.textContent = `${lastTraining.titre} - ${lastTraining.duree_totale} min - ${date}`;
+            lastTrainingCalories.textContent = `+${lastTraining.duree_totale * 7} kcal`;
+            lastTrainingCard.style.display = 'block';
+        }
+    }
 
+    // Gérer la soumission du formulaire
+    const form = document.getElementById('trainingForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Récupérer les données du formulaire
+            const typeSelect = document.getElementById('trainingType');
+            const dateInput = document.getElementById('trainingDate');
+            const durationInput = document.getElementById('trainingDuration');
+            const intensitySelect = document.getElementById('trainingIntensity');
+            const caloriesInput = document.getElementById('trainingCalories');
+            const distanceInput = document.getElementById('trainingDistance');
+            const notesTextarea = document.getElementById('trainingNotes');
+
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = '';
+
+            // Envoyer à l'API (validation côté serveur)
+            const result = await createEntrainement(
+                typeSelect.value,
+                dateInput.value,
+                durationInput.value ? parseInt(durationInput.value) : null,
+                notesTextarea.value || null
+            );
+
+            if (result.success) {
+                messageContainer.innerHTML = '<div style="background: #d8f3dc; color: #2d6a4f; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px;">✅ Séance ajoutée avec succès !</div>';
+                form.reset();
+                form.querySelector('input[type="date"]').value = new Date().toISOString().split('T')[0];
+                loadLastTraining();
+                setTimeout(() => {
+                    messageContainer.innerHTML = '';
+                }, 5000);
+            } else {
+                messageContainer.innerHTML = '<div style="background: #fee2e2; color: #c0392b; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px;">❌ Erreur: ' + result.message + '</div>';
+            }
+        });
+    }
+
+    // Charger les données au démarrage
+    loadLastTraining();
+</script>
 </body>
 </html>

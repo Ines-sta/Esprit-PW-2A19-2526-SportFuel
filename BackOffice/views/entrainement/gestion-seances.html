@@ -89,6 +89,75 @@
         <button class="btn btn-primary">➕ Nouvelle séance</button>
     </div>
 </div>
-
+<script>
+    function filterTable() {
+        const typeFilter = document.querySelector('.filter-item:first-child select')?.value || 'Tous';
+        const statutFilter = document.querySelector('.filter-item:nth-child(3) select')?.value || 'Tous';
+        const rows = document.querySelectorAll('.table-wrapper tbody tr');
+        
+        rows.forEach(row => {
+            const type = row.cells[2]?.innerText || '';
+            const statutSpan = row.cells[7]?.querySelector('span');
+            const statut = statutSpan ? statutSpan.innerText : '';
+            
+            let matchType = (typeFilter === 'Tous' || type === typeFilter);
+            let matchStatut = (statutFilter === 'Tous' || statut === statutFilter);
+            
+            row.style.display = (matchType && matchStatut) ? '' : 'none';
+        });
+    }
+    
+    function resetFilters() {
+        const typeSelect = document.querySelector('.filter-item:first-child select');
+        const statutSelect = document.querySelector('.filter-item:nth-child(3) select');
+        const coachSelect = document.querySelector('.filter-item:nth-child(4) select');
+        
+        if (typeSelect) typeSelect.value = 'Tous';
+        if (statutSelect) statutSelect.value = 'Tous';
+        if (coachSelect) coachSelect.value = 'Tous';
+        
+        const rows = document.querySelectorAll('.table-wrapper tbody tr');
+        rows.forEach(row => row.style.display = '');
+    }
+    
+    function confirmDelete(id) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette séance ?')) {
+            window.location.href = 'SeanceController.php?action=delete&id=' + id;
+        }
+    }
+    
+    function editSeance(id) {
+        window.location.href = 'SeanceController.php?action=edit&id=' + id;
+    }
+    
+    function validateSeance(id) {
+        if (confirm('Valider cette séance ?')) {
+            window.location.href = 'SeanceController.php?action=validate&id=' + id;
+        }
+    }
+    
+    // Attacher le filtre au bouton
+    const filterBtn = document.querySelector('.btn-filter');
+    if (filterBtn) filterBtn.onclick = filterTable;
+    
+    // Ajouter bouton reset
+    const filtersBar = document.querySelector('.filters-bar');
+    if (filtersBar && !document.querySelector('.btn-reset')) {
+        const resetBtn = document.createElement('button');
+        resetBtn.textContent = 'Reset';
+        resetBtn.className = 'btn btn-secondary btn-reset';
+        resetBtn.onclick = resetFilters;
+        filtersBar.appendChild(resetBtn);
+    }
+    
+    // Récupérer les messages depuis l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success')) {
+        alert('✅ ' + decodeURIComponent(urlParams.get('success')));
+    }
+    if (urlParams.get('error')) {
+        alert('❌ ' + decodeURIComponent(urlParams.get('error')));
+    }
+</script>
 </body>
 </html>
