@@ -58,6 +58,78 @@ function validerFormAliment(form) {
 }
 
 /**
+ * Valider le formulaire Course (ajout et modification d'une liste)
+ */
+function validerFormCourse(form) {
+    var date = form.querySelector('[name="date"]').value.trim();
+    var statut = form.querySelector('[name="statut"]').value.trim();
+    var erreurs = [];
+
+    // Date obligatoire et format AAAA-MM-JJ
+    if (date === '') {
+        erreurs.push("La date est obligatoire.");
+    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        erreurs.push("La date doit être au format AAAA-MM-JJ.");
+    }
+
+    // Statut obligatoire
+    if (statut === '') {
+        erreurs.push("Le statut est obligatoire.");
+    }
+
+    // Afficher les erreurs
+    var erreurDiv = form.querySelector('[id^="erreur"]');
+    if (erreurs.length > 0) {
+        if (erreurDiv) {
+            erreurDiv.textContent = erreurs.join(' ');
+            erreurDiv.style.display = 'block';
+        }
+        return false;
+    }
+
+    if (erreurDiv) {
+        erreurDiv.style.display = 'none';
+    }
+    return true;
+}
+
+/**
+ * Valider le formulaire d'ajout d'article à une course
+ */
+function validerFormArticle(form) {
+    var aliment = form.querySelector('[name="id_aliment"]').value.trim();
+    var quantite = form.querySelector('[name="quantite"]').value.trim();
+    var erreurs = [];
+
+    // Aliment obligatoire
+    if (aliment === '') {
+        erreurs.push("Veuillez sélectionner un aliment.");
+    }
+
+    // Quantité obligatoire et positive
+    if (quantite === '') {
+        erreurs.push("La quantité est obligatoire.");
+    } else if (isNaN(quantite) || parseFloat(quantite) <= 0) {
+        erreurs.push("La quantité doit être un nombre positif.");
+    }
+
+    // Afficher les erreurs
+    var erreurDiv = form.querySelector('[id^="erreur"]');
+    if (erreurs.length > 0) {
+        if (erreurDiv) {
+            erreurDiv.textContent = erreurs.join(' ');
+            erreurDiv.style.display = 'block';
+        }
+        return false;
+    }
+
+    if (erreurDiv) {
+        erreurDiv.style.display = 'none';
+    }
+    return true;
+}
+
+/**
  * Valider le formulaire Catégorie (ajout et modification)
  */
 function validerFormCategorie(form) {
