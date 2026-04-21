@@ -133,7 +133,6 @@
                             <?php endif; ?>
                         </td>
                         <td class="actions">
-                            <a href="../controllers/course_controller.php?action=toggle_achete&id_course=<?php echo $courseDetail['id_course']; ?>&id_aliment=<?php echo $art['id_aliment']; ?>" class="btn btn-success btn-sm"><?php echo $art['achete'] ? 'Annuler' : 'Acheté'; ?></a>
                             <a href="../controllers/course_controller.php?action=supprimer_article&id_course=<?php echo $courseDetail['id_course']; ?>&id_aliment=<?php echo $art['id_aliment']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Retirer cet article ?')">Retirer</a>
                         </td>
                     </tr>

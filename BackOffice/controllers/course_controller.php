@@ -102,16 +102,6 @@ switch ($action) {
             exit;
         }
         break;
-
-    case 'toggle_achete':
-        $id_course = intval($_GET['id_course'] ?? 0);
-        $id_aliment = intval($_GET['id_aliment'] ?? 0);
-        if ($id_course > 0 && $id_aliment > 0) {
-            $courseModel->marquerAchete($id_course, $id_aliment);
-            header('Location: course_controller.php?action=voir&id=' . $id_course);
-            exit;
-        }
-        break;
 }
 
 // Message de succès

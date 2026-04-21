@@ -27,6 +27,10 @@
 <!-- ===== MAIN ===== -->
 <div class="main-content">
 
+    <?php if (!empty($success)): ?>
+        <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
+    <?php endif; ?>
+
     <div class="welcome-banner">
         <div>
             <p class="greeting">Liste de courses</p>
@@ -101,7 +105,9 @@
             <ul class="course-list">
                 <?php foreach ($items as $art): ?>
                 <li class="course-item <?php echo $art['achete'] ? 'checked' : ''; ?>">
-                    <input type="checkbox" <?php echo $art['achete'] ? 'checked' : ''; ?> disabled>
+                    <a href="/Esprit-PW-2A19-2526-SportFuel/FrontOffice/controllers/course_controller.php?action=toggle_achete&id_course=<?php echo $courseDetail['id_course']; ?>&id_aliment=<?php echo $art['id_aliment']; ?>" style="display:inline-flex;align-items:center;justify-content:center;">
+                        <input type="checkbox" <?php echo $art['achete'] ? 'checked' : ''; ?> onclick="return false;">
+                    </a>
                     <span class="item-name"><?php echo htmlspecialchars($art['nom']); ?></span>
                     <span class="item-qty"><?php echo $art['quantite']; ?></span>
                     <span class="item-cat">
@@ -111,6 +117,9 @@
                             <span class="badge badge-inactif">À acheter</span>
                         <?php endif; ?>
                     </span>
+                    <a href="/Esprit-PW-2A19-2526-SportFuel/FrontOffice/controllers/course_controller.php?action=toggle_achete&id_course=<?php echo $courseDetail['id_course']; ?>&id_aliment=<?php echo $art['id_aliment']; ?>" class="btn btn-outline btn-sm" style="margin-left:auto;">
+                        <?php echo $art['achete'] ? 'Annuler' : 'Marquer acheté'; ?>
+                    </a>
                 </li>
                 <?php endforeach; ?>
             </ul>
