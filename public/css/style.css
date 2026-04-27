@@ -321,6 +321,11 @@ button { cursor: pointer; font-family: 'Inter', sans-serif; }
 .td-muted { color: var(--text-3); font-size: 13px; }
 .td-actions { display: flex; gap: 7px; align-items: center; }
 
+.sortable { cursor: pointer; white-space: nowrap; }
+.sortable:hover { color: var(--accent); }
+.sort-icon { font-size: 11px; margin-left: 4px; opacity: 0.5; }
+.sortable:hover .sort-icon { opacity: 1; }
+
 /* ── BADGES ──────────────────────────────────── */
 .badge {
     display: inline-block;

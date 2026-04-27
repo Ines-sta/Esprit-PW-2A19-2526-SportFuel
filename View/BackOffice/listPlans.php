@@ -62,9 +62,14 @@ foreach ($mois_fr  as $en => $fr) $today = str_replace($en, $fr, $today);
                     <div class="stat-delta orange">+3 cette semaine</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">4.8/5</div>
-                    <div class="stat-label">Note moyenne</div>
-                    <div class="stat-delta green">Stable</div>
+                    <?php
+                    require_once 'Controller/RepasController.php';
+                    $repasController = new RepasController();
+                    $totalRepas = count($repasController->listRepas());
+                    ?>
+                    <div class="stat-value"><?= $totalRepas ?></div>
+                    <div class="stat-label">Repas enregistres</div>
+                    <div class="stat-delta green">Total</div>
                 </div>
             </div>
 
@@ -83,12 +88,12 @@ foreach ($mois_fr  as $en => $fr) $today = str_replace($en, $fr, $today);
                     <table class="data-table" id="plansTable">
                         <thead>
                             <tr>
-                                <th>Nom</th>
-                                <th>Type</th>
-                                <th>Kcal cibles</th>
-                                <th>Semaine</th>
-                                <th>Date debut</th>
-                                <th>Date fin</th>
+                                <th class="sortable" data-col="0">Nom <span class="sort-icon">&#8597;</span></th>
+                                <th class="sortable" data-col="1">Type <span class="sort-icon">&#8597;</span></th>
+                                <th class="sortable" data-col="2">Kcal cibles <span class="sort-icon">&#8597;</span></th>
+                                <th class="sortable" data-col="3">Semaine <span class="sort-icon">&#8597;</span></th>
+                                <th class="sortable" data-col="4">Date debut <span class="sort-icon">&#8597;</span></th>
+                                <th class="sortable" data-col="5">Date fin <span class="sort-icon">&#8597;</span></th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -101,8 +106,8 @@ foreach ($mois_fr  as $en => $fr) $today = str_replace($en, $fr, $today);
                                             <?= str_replace('_', ' ', htmlspecialchars($plan->getType())) ?>
                                         </span>
                                     </td>
-                                    <td><?= htmlspecialchars($plan->getKcalCibles()) ?> kcal</td>
-                                    <td class="td-muted">S<?= htmlspecialchars($plan->getSemaine()) ?></td>
+                                    <td data-val="<?= $plan->getKcalCibles() ?>"><?= htmlspecialchars($plan->getKcalCibles()) ?> kcal</td>
+                                    <td class="td-muted" data-val="<?= $plan->getSemaine() ?>">S<?= htmlspecialchars($plan->getSemaine()) ?></td>
                                     <td class="td-muted"><?= htmlspecialchars($plan->getDateDebut()) ?></td>
                                     <td class="td-muted"><?= htmlspecialchars($plan->getDateFin()) ?></td>
                                     <td>
@@ -127,10 +132,52 @@ foreach ($mois_fr  as $en => $fr) $today = str_replace($en, $fr, $today);
 </div>
 
 <script>
+// ── SEARCH ──────────────────────────────────────
 document.getElementById('searchInput').addEventListener('keyup', function() {
     const q = this.value.toLowerCase();
     document.querySelectorAll('#plansTable tbody tr').forEach(row => {
         row.style.display = row.dataset.search.includes(q) ? '' : 'none';
+    });
+});
+
+// ── SORT ─────────────────────────────────────────
+let sortState = { col: null, dir: 'asc' };
+
+document.querySelectorAll('.sortable').forEach(th => {
+    th.style.cursor = 'pointer';
+    th.style.userSelect = 'none';
+
+    th.addEventListener('click', function() {
+        const col = parseInt(this.dataset.col);
+
+        if (sortState.col === col) {
+            sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortState.col = col;
+            sortState.dir = 'asc';
+        }
+
+        // Update icons
+        document.querySelectorAll('.sortable .sort-icon').forEach(ic => ic.textContent = '⇅');
+        this.querySelector('.sort-icon').textContent = sortState.dir === 'asc' ? '↑' : '↓';
+
+        const tbody = document.querySelector('#plansTable tbody');
+        const rows  = Array.from(tbody.querySelectorAll('tr'));
+
+        rows.sort((a, b) => {
+            const cellA = a.cells[col];
+            const cellB = b.cells[col];
+
+            // Use data-val if present (numeric cols), else text
+            const valA = cellA.dataset.val !== undefined ? parseFloat(cellA.dataset.val) : cellA.textContent.trim().toLowerCase();
+            const valB = cellB.dataset.val !== undefined ? parseFloat(cellB.dataset.val) : cellB.textContent.trim().toLowerCase();
+
+            if (valA < valB) return sortState.dir === 'asc' ? -1 : 1;
+            if (valA > valB) return sortState.dir === 'asc' ?  1 : -1;
+            return 0;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
     });
 });
 </script>
