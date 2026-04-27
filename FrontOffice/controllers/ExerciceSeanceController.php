@@ -1,28 +1,32 @@
 <?php
 
-require_once '../../config/Database.php';
-require_once '../../app/Models/Entrainement.php';
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../models/ExerciceSeance.php';
 
-class EntrainementController {
+class ExerciceSeanceController {
     private $model;
 
     public function __construct() {
         $database = new Database();
-        $this->model = new Entrainement($database);
+        $this->model = new ExerciceSeance($database);
     }
 
     // Gérer les requêtes GET
-    public function get($id_utilisateur = null, $id_entrainement = null) {
+    public function get($id_entrainement = null, $id_exercice = null) {
         try {
-            if ($id_entrainement) {
-                $result = $this->model->getById($id_entrainement);
+            if ($id_exercice) {
+                $result = $this->model->getById($id_exercice);
                 if (!$result) {
                     http_response_code(404);
-                    echo json_encode(['error' => 'Entraînement non trouvé']);
+                    echo json_encode(['error' => 'Exercice non trouvé']);
                     return;
                 }
+            } elseif ($id_entrainement) {
+                $result = $this->model->getAllByEntrainement($id_entrainement);
             } else {
-                $result = $this->model->getAll($id_utilisateur);
+                http_response_code(400);
+                echo json_encode(['error' => 'Paramètre manquant']);
+                return;
             }
 
             echo json_encode($result);
@@ -37,7 +41,7 @@ class EntrainementController {
         try {
             $id = $this->model->create($data);
             http_response_code(201);
-            echo json_encode(['id' => $id, 'message' => 'Entraînement créé avec succès']);
+            echo json_encode(['id' => $id, 'message' => 'Exercice créé avec succès']);
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode(['error' => $e->getMessage()]);
@@ -45,15 +49,15 @@ class EntrainementController {
     }
 
     // Gérer les requêtes PUT
-    public function put($id_entrainement, $data) {
+    public function put($id_exercice, $data) {
         try {
-            $affected = $this->model->update($id_entrainement, $data);
+            $affected = $this->model->update($id_exercice, $data);
             if ($affected === 0) {
                 http_response_code(404);
-                echo json_encode(['error' => 'Entraînement non trouvé']);
+                echo json_encode(['error' => 'Exercice non trouvé']);
                 return;
             }
-            echo json_encode(['message' => 'Entraînement mis à jour avec succès']);
+            echo json_encode(['message' => 'Exercice mis à jour avec succès']);
         } catch (Exception $e) {
             http_response_code(400);
             echo json_encode(['error' => $e->getMessage()]);
@@ -61,15 +65,15 @@ class EntrainementController {
     }
 
     // Gérer les requêtes DELETE
-    public function delete($id_entrainement) {
+    public function delete($id_exercice) {
         try {
-            $affected = $this->model->delete($id_entrainement);
+            $affected = $this->model->delete($id_exercice);
             if ($affected === 0) {
                 http_response_code(404);
-                echo json_encode(['error' => 'Entraînement non trouvé']);
+                echo json_encode(['error' => 'Exercice non trouvé']);
                 return;
             }
-            echo json_encode(['message' => 'Entraînement supprimé avec succès']);
+            echo json_encode(['message' => 'Exercice supprimé avec succès']);
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);

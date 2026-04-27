@@ -39,7 +39,7 @@ async function getEntrainementById(id) {
 }
 
 // Créer un nouvel entraînement
-async function createEntrainement(titre, date_entrainement, duree_totale = null, notes_globales = null) {
+async function createEntrainement(titre, date_entrainement, duree_totale = null, notes_globales = null, calories_estimees = null) {
     try {
         const response = await fetch(`${API_BASE_URL}/entrainements.php`, {
             method: 'POST',
@@ -51,7 +51,8 @@ async function createEntrainement(titre, date_entrainement, duree_totale = null,
                 titre: titre,
                 date_entrainement: date_entrainement,
                 duree_totale: duree_totale,
-                notes_globales: notes_globales
+                notes_globales: notes_globales,
+                calories_estimees: calories_estimees
             })
         });
         const data = await response.json();

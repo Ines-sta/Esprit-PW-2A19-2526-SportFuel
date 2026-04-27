@@ -47,37 +47,33 @@
 
     <!-- Cartes stats -->
     <div class="stat-cards section-spacing">
-        <div class="stat-card"><div class="stat-value">346</div><div class="stat-label">Séances totales</div></div>
-        <div class="stat-card"><div class="stat-value">48</div><div class="stat-label">Cette semaine</div></div>
-        <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">À venir</div></div>
-        <div class="stat-card"><div class="stat-value">8</div><div class="stat-label">Coachs actifs</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-total">—</div><div class="stat-label">Séances totales</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-attente">—</div><div class="stat-label">En attente</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-validee">—</div><div class="stat-label">Validées</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-types">—</div><div class="stat-label">Types distincts</div></div>
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="navigation-buttons section-spacing">
+        <a href="gestion_entrainement.html" class="btn btn-primary">🏋️ Gérer les programmes</a>
     </div>
 
     <!-- Filtres -->
     <div class="filters-bar">
-        <div class="filter-item"><label>Type</label><select><option>Tous</option><option>Musculation</option><option>Cardio</option><option>Course</option><option>Natation</option><option>Yoga</option></select></div>
-        <div class="filter-item"><label>Intensité</label><select><option>Toutes</option><option>Faible</option><option>Modérée</option><option>Élevée</option></select></div>
-        <div class="filter-item"><label>Statut</label><select><option>Tous</option><option>Validée</option><option>En attente</option></select></div>
-        <div class="filter-item"><label>Coach</label><select><option>Tous</option><option>Karim T.</option><option>Nadia R.</option><option>Sarra M.</option></select></div>
-        <div class="filter-item"><label>Date</label><input type="date" value="2026-04-07"></div>
+        <div class="filter-item"><label>Type</label><select id="filter-type"><option>Tous</option></select></div>
+        <div class="filter-item"><label>Statut</label><select id="filter-statut"><option>Tous</option><option>Validée</option><option>En attente</option></select></div>
         <div class="filter-item"><button class="btn btn-primary btn-filter">🔍 Appliquer</button></div>
+        <div class="filter-item"><button class="btn btn-secondary btn-reset">Reset</button></div>
     </div>
 
     <!-- Tableau des séances -->
     <div class="table-wrapper">
         <table>
             <thead>
-                <tr><th>ID</th><th>Utilisateur</th><th>Type</th><th>Durée</th><th>Intensité</th><th>Date</th><th>Coach</th><th>Statut</th><th>Actions</th></tr>
+                <tr><th>ID</th><th>Titre</th><th>Date</th><th>Durée</th><th>Statut</th><th>Notes</th><th>Actions</th></tr>
             </thead>
-            <tbody>
-                <tr><td>#S001</td><td>Ahmed B.</td><td>Musculation</td><td>55 min</td><td>Élevée</td><td>07/04/2026</td><td>Karim T.</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
-                <tr><td>#S002</td><td>Sarra M.</td><td>Yoga</td><td>45 min</td><td>Faible</td><td>06/04/2026</td><td>Sarra M.</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
-                <tr><td>#S003</td><td>Karim T.</td><td>Course à pied</td><td>40 min</td><td>Modérée</td><td>05/04/2026</td><td>Nadia R.</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
-                <tr><td>#S004</td><td>Nadia R.</td><td>Natation</td><td>60 min</td><td>Élevée</td><td>04/04/2026</td><td>Yassine L.</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
-                <tr><td>#S005</td><td>Yassine L.</td><td>Vélo</td><td>50 min</td><td>Modérée</td><td>03/04/2026</td><td>Karim T.</td><td><span class="badge-attente">En attente</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
-                <tr><td>#S006</td><td>Leila B.</td><td>Cardio</td><td>30 min</td><td>Modérée</td><td>02/04/2026</td><td>—</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
-                <tr><td>#S007</td><td>Mehdi A.</td><td>Musculation</td><td>70 min</td><td>Élevée</td><td>01/04/2026</td><td>Karim T.</td><td><span class="badge-validee">Validée</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
-                <tr><td>#S008</td><td>Ines S.</td><td>Crossfit</td><td>45 min</td><td>Élevée</td><td>31/03/2026</td><td>Nadia R.</td><td><span class="badge-attente">En attente</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button><button class="btn-icon">✓</button></td></tr>
+            <tbody id="seances-tbody">
+                <tr><td colspan="7" style="text-align:center;">Chargement...</td></tr>
             </tbody>
         </table>
     </div>
@@ -90,67 +86,180 @@
     </div>
 </div>
 <script>
-    function filterTable() {
-        const typeFilter = document.querySelector('.filter-item:first-child select')?.value || 'Tous';
-        const statutFilter = document.querySelector('.filter-item:nth-child(3) select')?.value || 'Tous';
-        const rows = document.querySelectorAll('.table-wrapper tbody tr');
-        
-        rows.forEach(row => {
-            const type = row.cells[2]?.innerText || '';
-            const statutSpan = row.cells[7]?.querySelector('span');
-            const statut = statutSpan ? statutSpan.innerText : '';
-            
-            let matchType = (typeFilter === 'Tous' || type === typeFilter);
-            let matchStatut = (statutFilter === 'Tous' || statut === statutFilter);
-            
-            row.style.display = (matchType && matchStatut) ? '' : 'none';
+    const HANDLER_BASE_URL = '../../../includes';
+    let allSeances = []; // store fetched data for filtering
+
+    // ============ LOAD DATA FROM DATABASE ============
+    function loadSeances() {
+        fetch(`${HANDLER_BASE_URL}/list_entrainements.php`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    allSeances = data.data;
+                    renderTable(allSeances);
+                    updateStats(allSeances);
+                    populateTypeFilter(allSeances);
+                } else {
+                    document.getElementById('seances-tbody').innerHTML =
+                        '<tr><td colspan="7" style="text-align:center;">Erreur lors du chargement des données.</td></tr>';
+                }
+            })
+            .catch(() => {
+                document.getElementById('seances-tbody').innerHTML =
+                    '<tr><td colspan="7" style="text-align:center;">Erreur de connexion au serveur.</td></tr>';
+            });
+    }
+
+    // ============ RENDER TABLE ============
+    function renderTable(seances) {
+        const tbody = document.getElementById('seances-tbody');
+        if (seances.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Aucune séance trouvée.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = seances.map(s => {
+            const id = s.id_entrainement;
+            const titre = s.titre || '—';
+            const date = formatDate(s.date_entrainement);
+            const duree = s.duree_totale ? s.duree_totale + ' min' : '—';
+            const statut = s.statut || 'En attente';
+            const badgeClass = statut === 'Validée' ? 'badge-validee' : 'badge-attente';
+            // Show notes but truncate long ones, skip programme metadata
+            let notes = s.notes_globales || '—';
+            if (notes.startsWith('__PROGRAMME__')) {
+                notes = '📋 Programme';
+            } else if (notes.length > 30) {
+                notes = notes.substring(0, 30) + '…';
+            }
+
+            return `<tr>
+                <td>#${id}</td>
+                <td>${titre}</td>
+                <td>${date}</td>
+                <td>${duree}</td>
+                <td><span class="${badgeClass}">${statut}</span></td>
+                <td>${notes}</td>
+                <td class="actions">
+                    <button type="button" class="btn-icon" onclick="editSeance(${id})">✏️</button>
+                    <button type="button" class="btn-icon" onclick="confirmDelete(${id})">🗑️</button>
+                    <button type="button" class="btn-icon" onclick="validateSeance(${id})">✓</button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    // ============ UPDATE STATS ============
+    function updateStats(seances) {
+        document.getElementById('stat-total').textContent = seances.length;
+        document.getElementById('stat-attente').textContent = seances.filter(s => s.statut === 'En attente').length;
+        document.getElementById('stat-validee').textContent = seances.filter(s => s.statut === 'Validée').length;
+        const types = new Set(seances.map(s => s.titre));
+        document.getElementById('stat-types').textContent = types.size;
+    }
+
+    // ============ POPULATE TYPE FILTER ============
+    function populateTypeFilter(seances) {
+        const typeSelect = document.getElementById('filter-type');
+        const types = [...new Set(seances.map(s => s.titre))].sort();
+        types.forEach(t => {
+            const opt = document.createElement('option');
+            opt.textContent = t;
+            typeSelect.appendChild(opt);
         });
     }
-    
+
+    // ============ FORMAT DATE ============
+    function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        return dateStr;
+    }
+
+    // ============ FILTERS ============
+    function filterTable() {
+        const typeFilter = document.getElementById('filter-type').value;
+        const statutFilter = document.getElementById('filter-statut').value;
+
+        const filtered = allSeances.filter(s => {
+            const matchType = (typeFilter === 'Tous' || s.titre === typeFilter);
+            const matchStatut = (statutFilter === 'Tous' || s.statut === statutFilter);
+            return matchType && matchStatut;
+        });
+        renderTable(filtered);
+    }
+
     function resetFilters() {
-        const typeSelect = document.querySelector('.filter-item:first-child select');
-        const statutSelect = document.querySelector('.filter-item:nth-child(3) select');
-        const coachSelect = document.querySelector('.filter-item:nth-child(4) select');
-        
-        if (typeSelect) typeSelect.value = 'Tous';
-        if (statutSelect) statutSelect.value = 'Tous';
-        if (coachSelect) coachSelect.value = 'Tous';
-        
-        const rows = document.querySelectorAll('.table-wrapper tbody tr');
-        rows.forEach(row => row.style.display = '');
+        document.getElementById('filter-type').value = 'Tous';
+        document.getElementById('filter-statut').value = 'Tous';
+        renderTable(allSeances);
     }
-    
+
+    // ============ ACTION HANDLERS ============
     function confirmDelete(id) {
+        if (!id) return;
         if (confirm('Êtes-vous sûr de vouloir supprimer cette séance ?')) {
-            window.location.href = 'SeanceController.php?action=delete&id=' + id;
+            const formData = new FormData();
+            formData.append('id_entrainement', id);
+
+            fetch(`${HANDLER_BASE_URL}/delete_entrainement.php`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Séance supprimée avec succès.');
+                    loadSeances(); // reload data instead of full page reload
+                } else {
+                    alert('Erreur : ' + (data.error || 'Impossible de supprimer la séance'));
+                }
+            })
+            .catch(() => alert('Erreur de connexion au serveur.'));
         }
     }
-    
+
     function editSeance(id) {
-        window.location.href = 'SeanceController.php?action=edit&id=' + id;
+        if (!id) return;
+        // Redirect to the entrainement management page for editing
+        window.location.href = `gestion_entrainement.html?edit=${id}`;
     }
-    
+
     function validateSeance(id) {
+        if (!id) return;
         if (confirm('Valider cette séance ?')) {
-            window.location.href = 'SeanceController.php?action=validate&id=' + id;
+            const formData = new FormData();
+            formData.append('id_entrainement', id);
+            formData.append('statut', 'Validée');
+
+            fetch(`${HANDLER_BASE_URL}/update_entrainement.php`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Séance validée avec succès.');
+                    loadSeances(); // reload data instead of full page reload
+                } else {
+                    alert('Erreur : ' + (data.error || 'Impossible de valider la séance'));
+                }
+            })
+            .catch(() => alert('Erreur de connexion au serveur.'));
         }
     }
-    
-    // Attacher le filtre au bouton
-    const filterBtn = document.querySelector('.btn-filter');
-    if (filterBtn) filterBtn.onclick = filterTable;
-    
-    // Ajouter bouton reset
-    const filtersBar = document.querySelector('.filters-bar');
-    if (filtersBar && !document.querySelector('.btn-reset')) {
-        const resetBtn = document.createElement('button');
-        resetBtn.textContent = 'Reset';
-        resetBtn.className = 'btn btn-secondary btn-reset';
-        resetBtn.onclick = resetFilters;
-        filtersBar.appendChild(resetBtn);
-    }
-    
-    // Récupérer les messages depuis l'URL
+
+    // ============ EVENT LISTENERS ============
+    document.querySelector('.btn-filter').onclick = filterTable;
+    document.querySelector('.btn-reset').onclick = resetFilters;
+
+    // ============ INIT ============
+    loadSeances();
+
+    // URL messages
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success')) {
         alert('✅ ' + decodeURIComponent(urlParams.get('success')));

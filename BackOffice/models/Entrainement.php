@@ -38,8 +38,7 @@ class Entrainement {
             throw new Exception('Durée invalide');
         }
 
-        $sql = "INSERT INTO entrainements (id_utilisateur, titre, date_entrainement, duree_totale, notes_globales, statut)
-                VALUES (?, ?, ?, ?, ?, 'En attente')";
+        $sql = "INSERT INTO entrainements (id_utilisateur, titre, date_entrainement, duree_totale, notes_globales, statut)\n                VALUES (?, ?, ?, ?, ?, 'En attente')";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
@@ -98,5 +97,4 @@ class Entrainement {
         return $d && $d->format('Y-m-d') === $date;
     }
 }
-
 ?>

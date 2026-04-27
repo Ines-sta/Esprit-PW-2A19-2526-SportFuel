@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../config/Database.php';
-require_once '../../app/Models/ExerciceSeance.php';
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../models/ExerciceSeance.php';
 
 class ExerciceSeanceController {
     private $model;

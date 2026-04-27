@@ -53,17 +53,31 @@
         <div class="stat-card"><div class="stat-value">4.9</div><div class="stat-label">Note moyenne</div></div>
     </div>
 
+    <!-- Navigation buttons -->
+    <div class="navigation-buttons section-spacing">
+        <a href="gestion-seances.html" class="btn btn-primary">⚙️ Gérer les séances</a>
+    </div>
+
     <!-- Formulaire ajout programme -->
     <div class="form-card">
         <h2 class="section-title">➕ Nouveau programme d'entraînement</h2>
-        <form action="#" method="post">
+        <form action="#" method="post" id="programForm" novalidate>
+            <div id="programFormErrors" role="alert" style="display:none; margin-bottom:16px; padding:12px 16px; background:#fde8e8; border:1px solid #f5c2c7; border-radius:8px; color:#842029; font-size:14px;"></div>
             <div class="form-row">
-                <div class="form-group"><label>Nom du programme *</label><input type="text" placeholder="Ex: Prise de masse express"></div>
-                <div class="form-group"><label>Sport cible</label><input type="text" placeholder="Musculation / Course / Natation"></div>
-                <div class="form-group"><label>Niveau requis</label><select><option>Débutant</option><option>Intermédiaire</option><option>Avancé</option></select></div>
-                <div class="form-group"><label>Fréquence (séances/semaine)</label><input type="text" placeholder="4-5 séances"></div>
-                <div class="form-group"><label>Durée totale (semaines)</label><input type="text" placeholder="8 semaines"></div>
-                <div class="form-group"><label>Coach responsable</label><input type="text" placeholder="Nom du coach"></div>
+                <div class="form-group"><label>Nom du programme *</label><input type="text" maxlength="120" placeholder="Ex: Prise de masse express" data-field="nom_programme" required autocomplete="off"></div>
+                <div class="form-group"><label>Sport cible *</label><select data-field="sport_cible" required>
+                    <option value="">Sélectionnez un type</option>
+                    <option>Musculation</option>
+                    <option>Cardio</option>
+                    <option>Course</option>
+                    <option>Natation</option>
+                    <option>Yoga</option>
+                </select></div>
+                <div class="form-group"><label>Date de début du programme *</label><input type="date" data-field="date_programme" id="date_programme" required></div>
+                <div class="form-group"><label>Niveau requis</label><select data-field="niveau"><option>Débutant</option><option>Intermédiaire</option><option>Avancé</option></select></div>
+                <div class="form-group"><label>Fréquence (séances / semaine) *</label><input type="number" min="1" max="14" step="1" inputmode="numeric" placeholder="ex: 3" data-field="frequence" required></div>
+                <div class="form-group"><label>Durée totale (semaines) *</label><input type="number" min="1" max="104" step="1" inputmode="numeric" placeholder="ex: 8" data-field="duree_semaines" required></div>
+                <div class="form-group"><label>Coach responsable</label><input type="text" maxlength="80" placeholder="Nom du coach" data-field="coach" autocomplete="name"></div>
             </div>
             <button type="submit" class="btn btn-primary">📌 Créer le programme</button>
         </form>
@@ -73,14 +87,10 @@
     <div class="table-wrapper">
         <table>
             <thead>
-                <tr><th>ID</th><th>Nom</th><th>Sport</th><th>Niveau</th><th>Fréquence</th><th>Coach</th><th>Statut</th><th>Actions</th></tr>
+                <tr><th>ID</th><th>Nom</th><th>Sport</th><th>Date début</th><th>Niveau</th><th>Fréquence</th><th>Coach</th><th>Statut</th><th>Actions</th></tr>
             </thead>
-            <tbody>
-                <tr><td>#P001</td><td>Prise de masse express</td><td>Musculation</td><td>Intermédiaire</td><td>5j/sem</td><td>Karim T.</td><td><span class="badge-actif">Actif</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button></td></tr>
-                <tr><td>#P002</td><td>Endurance marathon</td><td>Course à pied</td><td>Avancé</td><td>6j/sem</td><td>Nadia R.</td><td><span class="badge-actif">Actif</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button></td></tr>
-                <tr><td>#P003</td><td>Mobilité douce</td><td>Yoga</td><td>Débutant</td><td>3j/sem</td><td>Sarra M.</td><td><span class="badge-inactif">Inactif</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button></td></tr>
-                <tr><td>#P004</td><td>Cardio brûle-graisse</td><td>HIIT</td><td>Intermédiaire</td><td>4j/sem</td><td>Ahmed B.</td><td><span class="badge-actif">Actif</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button></td></tr>
-                <tr><td>#P005</td><td>Natation compétition</td><td>Natation</td><td>Avancé</td><td>5j/sem</td><td>Yassine L.</td><td><span class="badge-inactif">Inactif</span></td><td class="actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button></td></tr>
+            <tbody id="programsTableBody">
+                <tr><td colspan="9" style="text-align:center; padding:16px;">Chargement...</td></tr>
             </tbody>
         </table>
     </div>
@@ -92,8 +102,8 @@
         const rows = document.querySelectorAll('.table-wrapper tbody tr');
         
         rows.forEach(row => {
-            const niveau = row.cells[3]?.innerText || '';
-            const statutSpan = row.cells[6]?.querySelector('span');
+            const niveau = row.cells[4]?.innerText || '';
+            const statutSpan = row.cells[7]?.querySelector('span');
             const statut = statutSpan ? statutSpan.innerText : '';
             
             let matchNiveau = (niveauFilter === 'Tous' || niveau === niveauFilter);
@@ -114,20 +124,272 @@
         rows.forEach(row => row.style.display = '');
     }
     
-    function confirmDeleteProgram(id) {
-        if (confirm('Êtes-vous sûr de vouloir supprimer ce programme ?')) {
-            window.location.href = 'ProgrammeController.php?action=delete&id=' + id;
+    const APP_BASE_URL = `${window.location.protocol}//localhost/Esprit-PW-2A19-2526-SportFuel`;
+    const HANDLER_BASE_URL = `${APP_BASE_URL}/includes`;
+    const programForm = document.getElementById('programForm');
+    const programsTableBody = document.getElementById('programsTableBody');
+    const programFormErrors = document.getElementById('programFormErrors');
+
+    function dateLocaleISO(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+    }
+
+    function todayISO() {
+        return dateLocaleISO(new Date());
+    }
+
+    function initProgramFormConstraints() {
+        const dateInput = programForm.querySelector('[data-field="date_programme"]');
+        if (dateInput) {
+            dateInput.min = todayISO();
+            dateInput.addEventListener('change', function () {
+                if (dateInput.value && dateInput.value < dateInput.min) {
+                    dateInput.value = dateInput.min;
+                }
+            });
         }
     }
-    
-    function editProgram(id) {
-        window.location.href = 'ProgrammeController.php?action=edit&id=' + id;
+
+    function clearProgramFormErrors() {
+        programFormErrors.style.display = 'none';
+        programFormErrors.innerHTML = '';
     }
-    
-    function toggleStatut(id, currentStatut) {
-        const newStatut = (currentStatut === 'Actif') ? 'Inactif' : 'Actif';
-        if (confirm('Changer le statut du programme ?')) {
-            window.location.href = 'ProgrammeController.php?action=toggle&id=' + id + '&statut=' + newStatut;
+
+    function showProgramFormErrors(messages) {
+        if (!messages.length) {
+            clearProgramFormErrors();
+            return;
+        }
+        programFormErrors.innerHTML = '<strong>Veuillez corriger :</strong><ul style="margin:8px 0 0 18px;">' +
+            messages.map(function (m) { return '<li>' + m + '</li>'; }).join('') + '</ul>';
+        programFormErrors.style.display = 'block';
+    }
+
+    /**
+     * Contrôle de saisie côté client (complète les attributs HTML min/max).
+     */
+    function validateProgramForm() {
+        const errors = [];
+        const nom = programForm.querySelector('[data-field="nom_programme"]').value.trim();
+        const sport = programForm.querySelector('[data-field="sport_cible"]').value.trim();
+        const dateVal = programForm.querySelector('[data-field="date_programme"]').value.trim();
+        const freqRaw = programForm.querySelector('[data-field="frequence"]').value.trim();
+        const dureeRaw = programForm.querySelector('[data-field="duree_semaines"]').value.trim();
+        const coach = programForm.querySelector('[data-field="coach"]').value.trim();
+
+        if (nom.length < 2) {
+            errors.push('Le nom du programme doit contenir au moins 2 caractères.');
+        }
+        if (nom.length > 120) {
+            errors.push('Le nom du programme ne doit pas dépasser 120 caractères.');
+        }
+        if (!sport) {
+            errors.push('Veuillez sélectionner un sport cible.');
+        }
+        if (!dateVal) {
+            errors.push('La date de début est obligatoire.');
+        } else if (dateVal < todayISO()) {
+            errors.push('La date de début ne peut pas être antérieure à aujourd\'hui.');
+        }
+
+        const freq = parseInt(freqRaw, 10);
+        if (freqRaw === '' || Number.isNaN(freq)) {
+            errors.push('La fréquence doit être un nombre entier (séances par semaine).');
+        } else if (freq < 1 || freq > 14) {
+            errors.push('La fréquence doit être comprise entre 1 et 14 séances par semaine.');
+        }
+
+        const duree = parseInt(dureeRaw, 10);
+        if (dureeRaw === '' || Number.isNaN(duree)) {
+            errors.push('La durée totale doit être un nombre entier (semaines).');
+        } else if (duree < 1 || duree > 104) {
+            errors.push('La durée doit être comprise entre 1 et 104 semaines.');
+        }
+
+        if (coach.length > 0) {
+            if (coach.length < 2) {
+                errors.push('Le nom du coach doit contenir au moins 2 caractères s\'il est renseigné.');
+            }
+            if (!/^[A-Za-zÀ-ÿ\u00C0-\u017F\s'.-]+$/i.test(coach)) {
+                errors.push('Le nom du coach ne peut contenir que des lettres, espaces, tirets et apostrophes.');
+            }
+        }
+
+        return errors;
+    }
+
+    function normalizeStatus(dbStatus) {
+        return dbStatus === 'Validée' ? 'Actif' : 'Inactif';
+    }
+
+    function parseProgrammeMeta(notes) {
+        const empty = { libelle: '—', niveau: '—', frequence: '—', coach: '—' };
+        if (!notes || notes.indexOf('__PROGRAMME__|') !== 0) return empty;
+        const rest = notes.slice('__PROGRAMME__|'.length);
+        const parts = rest.split('|').map(function (s) { return s.trim(); });
+        const libelle = parts[0] || '—';
+        let niveau = '—', frequence = '—', coach = '—';
+        for (let i = 1; i < parts.length; i++) {
+            const p = parts[i];
+            if (p.indexOf('Niveau:') === 0) niveau = p.replace(/^Niveau:\s*/i, '').trim() || '—';
+            if (p.indexOf('Fréquence:') === 0) frequence = p.replace(/^Fréquence:\s*/i, '').trim() || '—';
+            if (p.indexOf('Coach:') === 0) coach = p.replace(/^Coach:\s*/i, '').trim() || '—';
+        }
+        return { libelle: libelle, niveau: niveau, frequence: frequence, coach: coach };
+    }
+
+    function renderPrograms(rows) {
+        if (!Array.isArray(rows) || rows.length === 0) {
+            programsTableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:16px;">Aucun programme en base.</td></tr>';
+            return;
+        }
+
+        programsTableBody.innerHTML = rows.map(row => {
+            const meta = parseProgrammeMeta(row.notes_globales || '');
+            const name = meta.libelle !== '—' ? meta.libelle : (row.notes_globales || ('Programme ' + row.titre));
+            const dateDebut = row.date_entrainement
+                ? new Date(row.date_entrainement + 'T12:00:00').toLocaleDateString('fr-FR')
+                : '—';
+            const statusLabel = normalizeStatus(row.statut);
+            const badgeClass = statusLabel === 'Actif' ? 'badge-actif' : 'badge-inactif';
+
+            return `
+                <tr>
+                    <td>#P${row.id_entrainement}</td>
+                    <td>${name}</td>
+                    <td>${row.titre || '—'}</td>
+                    <td>${dateDebut}</td>
+                    <td>${meta.niveau}</td>
+                    <td>${meta.frequence}</td>
+                    <td>${meta.coach}</td>
+                    <td><span class="${badgeClass}">${statusLabel}</span></td>
+                    <td class="actions">
+                        <button type="button" class="btn-icon" onclick="editProgram(${row.id_entrainement})">✏️</button>
+                        <button type="button" class="btn-icon" onclick="confirmDeleteProgram(${row.id_entrainement})">🗑️</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    async function parseJsonSafe(response) {
+        const text = await response.text();
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            throw new Error('Réponse serveur invalide (PHP non exécuté ou erreur serveur).');
+        }
+    }
+
+    async function loadPrograms() {
+        try {
+            const response = await fetch(`${HANDLER_BASE_URL}/list_entrainements.php?programmes=1`);
+            const data = await parseJsonSafe(response);
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Chargement impossible');
+            }
+            renderPrograms(data.data);
+        } catch (error) {
+            programsTableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:16px;">Erreur de chargement des programmes.</td></tr>';
+        }
+    }
+
+    async function createProgram(event) {
+        event.preventDefault();
+        clearProgramFormErrors();
+
+        const validationErrors = validateProgramForm();
+        if (validationErrors.length > 0) {
+            showProgramFormErrors(validationErrors);
+            return;
+        }
+
+        const nomProgramme = programForm.querySelector('[data-field="nom_programme"]').value.trim();
+        const sportCible = programForm.querySelector('[data-field="sport_cible"]').value.trim();
+        const dateProgramme = programForm.querySelector('[data-field="date_programme"]').value.trim();
+        const niveau = programForm.querySelector('[data-field="niveau"]').value.trim();
+        const frequence = programForm.querySelector('[data-field="frequence"]').value.trim();
+        const dureeSemaines = programForm.querySelector('[data-field="duree_semaines"]').value.trim();
+        const coach = programForm.querySelector('[data-field="coach"]').value.trim();
+
+        const notesProgramme = '__PROGRAMME__|' + nomProgramme +
+            '|Niveau: ' + (niveau || '—') +
+            '|Fréquence: ' + frequence +
+            '|Durée: ' + dureeSemaines +
+            '|Coach: ' + (coach || '—');
+
+        const formData = new FormData();
+        formData.append('id_utilisateur', '1');
+        formData.append('titre', sportCible);
+        formData.append('date_entrainement', dateProgramme);
+        formData.append('notes', notesProgramme);
+
+        try {
+            const response = await fetch(`${HANDLER_BASE_URL}/add_entrainement.php`, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await parseJsonSafe(response);
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || 'Création impossible');
+            }
+
+            programForm.reset();
+            clearProgramFormErrors();
+            initProgramFormConstraints();
+            await loadPrograms();
+            alert('Programme enregistré en base avec succès.');
+        } catch (error) {
+            alert('Erreur: ' + error.message);
+        }
+    }
+
+    async function confirmDeleteProgram(id) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce programme ?')) return;
+
+        const formData = new FormData();
+        formData.append('id_entrainement', String(id));
+
+        try {
+            const response = await fetch(`${HANDLER_BASE_URL}/delete_entrainement.php`, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await parseJsonSafe(response);
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || 'Suppression impossible');
+            }
+            await loadPrograms();
+        } catch (error) {
+            alert('Erreur: ' + error.message);
+        }
+    }
+
+    function editProgram(id) {
+        alert('Edition rapide non activée. ID programme: ' + id);
+    }
+
+    async function toggleStatut(id, currentStatut) {
+        const newStatut = currentStatut === 'Actif' ? 'En attente' : 'Validée';
+        const formData = new FormData();
+        formData.append('id_entrainement', String(id));
+        formData.append('statut', newStatut);
+
+        try {
+            const response = await fetch(`${HANDLER_BASE_URL}/update_entrainement.php`, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await parseJsonSafe(response);
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || 'Mise à jour impossible');
+            }
+            await loadPrograms();
+        } catch (error) {
+            alert('Erreur: ' + error.message);
         }
     }
     
@@ -153,6 +415,10 @@
     if (urlParams.get('error')) {
         alert('❌ ' + decodeURIComponent(urlParams.get('error')));
     }
+
+    programForm.addEventListener('submit', createProgram);
+    initProgramFormConstraints();
+    loadPrograms();
 </script>
 </body>
 </html>

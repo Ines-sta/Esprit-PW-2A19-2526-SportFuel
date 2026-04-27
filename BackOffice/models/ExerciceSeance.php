@@ -53,8 +53,7 @@ class ExerciceSeance {
             throw new Exception('Poids invalide');
         }
 
-        $sql = "INSERT INTO exercices_seance (id_entrainement, nom_exercice, duree_secondes, series, repetitions, charge_kg, distance_km)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO exercices_seance (id_entrainement, nom_exercice, duree_secondes, series, repetitions, charge_kg, distance_km)\n                VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
