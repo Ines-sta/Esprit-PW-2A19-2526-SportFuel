@@ -10,7 +10,7 @@
 
 <!-- ===== SIDEBAR ===== -->
 <aside class="sidebar">
-    <a href="#" class="sidebar-brand">
+    <a href="../../index.php" class="sidebar-brand">
         <div class="sidebar-logo">SF</div>
         <span>Sport<em>Fuel</em></span>
     </a>
@@ -24,14 +24,9 @@
         <li><a href="#"><span class="icon">👥</span> Utilisateurs</a></li>
         <li><a href="#"><span class="icon">🍽️</span> Plans alimentaires</a></li>
         <li><a href="#"><span class="icon">🏋️</span> Entraînements</a></li>
-        <li><a href="/Esprit-PW-2A19-2526-SportFuel/BackOffice/controllers/aliment_controller.php" class="active"><span class="icon">🥗</span> Aliments & courses</a></li>
+        <li><a href="/Esprit-PW-2A19-2526-SportFuel/BackOffice/controllers/aliment_controller.php" class="active"><span class="icon">🥗</span> Aliments</a></li>
         <li><a href="/Esprit-PW-2A19-2526-SportFuel/BackOffice/controllers/course_controller.php"><span class="icon">🛒</span> Listes de courses</a></li>
         <li><a href="#"><span class="icon">🤝</span> Espace coach</a></li>
-    </ul>
-    <div class="sidebar-section">Général</div>
-    <ul class="sidebar-menu">
-        <li><a href="#"><span class="icon">📈</span> Statistiques</a></li>
-        <li><a href="#"><span class="icon">⚙️</span> Paramètres</a></li>
     </ul>
 </aside>
 
@@ -43,7 +38,6 @@
         <span class="date"><?php echo date('l j F Y'); ?></span>
     </div>
 
-    <!-- Messages -->
     <?php if (!empty($success)): ?>
         <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
     <?php endif; ?>
@@ -51,40 +45,73 @@
         <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
 
-    <!-- Stats (dummy) -->
+    <!-- Stats dynamiques -->
     <div class="stat-cards">
         <div class="stat-card">
-            <div class="value">48</div>
-            <div class="trend">+5 cette semaine</div>
+            <div class="value"><?php echo $stats['total']; ?></div>
             <div class="label">Total aliments</div>
         </div>
         <div class="stat-card">
-            <div class="value">32</div>
-            <div class="trend">67%</div>
+            <div class="value"><?php echo $stats['nb_bio']; ?></div>
+            <div class="trend"><?php echo $stats['total'] > 0 ? round($stats['nb_bio'] * 100 / $stats['total']) . '%' : '0%'; ?></div>
             <div class="label">Produits bio</div>
         </div>
         <div class="stat-card">
-            <div class="value">41</div>
-            <div class="trend">85%</div>
+            <div class="value"><?php echo $stats['nb_local']; ?></div>
+            <div class="trend"><?php echo $stats['total'] > 0 ? round($stats['nb_local'] * 100 / $stats['total']) . '%' : '0%'; ?></div>
             <div class="label">Produits locaux</div>
         </div>
         <div class="stat-card">
-            <div class="value orange">156</div>
+            <div class="value orange"><?php echo $stats['kcal_moyen']; ?></div>
             <div class="trend">Moy. / 100g</div>
             <div class="label">Kcal moyen</div>
         </div>
+        <div class="stat-card">
+            <div class="value orange"><?php echo $stats['co2_moyen']; ?></div>
+            <div class="trend">kg CO₂</div>
+            <div class="label">CO₂ moyen</div>
+        </div>
     </div>
 
-    <!-- Search Bar (dummy) -->
-    <div class="search-bar" style="margin-bottom:20px;display:flex;gap:12px;align-items:center;">
-        <input type="text" placeholder="Rechercher un aliment..." style="flex:1;padding:10px 16px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
-        <button class="btn btn-outline" type="button">🔍 Rechercher</button>
+    <!-- Stats par catégorie -->
+    <?php if (!empty($stats['par_categorie'])): ?>
+    <div class="card" style="margin-bottom:20px;">
+        <div class="card-header"><h3>Répartition par catégorie</h3></div>
+        <div style="padding:16px;display:flex;gap:12px;flex-wrap:wrap;">
+            <?php foreach ($stats['par_categorie'] as $cat): ?>
+                <span class="badge badge-bio"><?php echo htmlspecialchars($cat['categorie']); ?> : <?php echo $cat['nb']; ?></span>
+            <?php endforeach; ?>
+        </div>
     </div>
+    <?php endif; ?>
 
-    <!-- Aliments Table -->
+    <!-- Recherche & filtres -->
+    <form method="GET" action="aliment_controller.php" class="search-bar" style="margin-bottom:20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <input type="text" name="q" value="<?php echo htmlspecialchars($filtre_q); ?>" placeholder="Rechercher un aliment..." style="flex:1;min-width:200px;padding:10px 16px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
+        <select name="categorie" style="padding:10px 16px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
+            <option value="">Toutes les catégories</option>
+            <?php foreach ($categories as $cat): ?>
+                <option value="<?php echo htmlspecialchars($cat); ?>" <?php echo $filtre_categorie === $cat ? 'selected' : ''; ?>><?php echo htmlspecialchars($cat); ?></option>
+            <?php endforeach; ?>
+        </select>
+        <select name="bio" style="padding:10px 16px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
+            <option value="">Bio (tous)</option>
+            <option value="1" <?php echo $filtre_bio === '1' ? 'selected' : ''; ?>>Bio uniquement</option>
+            <option value="0" <?php echo $filtre_bio === '0' ? 'selected' : ''; ?>>Non bio</option>
+        </select>
+        <select name="local" style="padding:10px 16px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
+            <option value="">Local (tous)</option>
+            <option value="1" <?php echo $filtre_local === '1' ? 'selected' : ''; ?>>Local uniquement</option>
+            <option value="0" <?php echo $filtre_local === '0' ? 'selected' : ''; ?>>Non local</option>
+        </select>
+        <button class="btn btn-primary" type="submit">🔍 Rechercher</button>
+        <a class="btn btn-outline" href="aliment_controller.php">Réinitialiser</a>
+    </form>
+
+    <!-- Tableau Aliments -->
     <div class="card">
         <div class="card-header">
-            <h3>Liste des aliments</h3>
+            <h3>Liste des aliments (<?php echo count($aliments); ?>)</h3>
             <button class="btn btn-primary" onclick="document.getElementById('modalAjout').classList.add('active')">+ Ajouter un aliment</button>
         </div>
 
@@ -102,20 +129,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($aliments as $a): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($a['nom']); ?></td>
-                        <td><?php echo htmlspecialchars($a['categorie']); ?></td>
-                        <td><?php echo $a['kcal_portion']; ?></td>
-                        <td><?php echo $a['co2_impact']; ?></td>
-                        <td><?php echo $a['est_bio'] ? '<span class="badge badge-bio">Bio</span>' : '—'; ?></td>
-                        <td><?php echo $a['est_local'] ? '<span class="badge badge-local">Local</span>' : '—'; ?></td>
-                        <td class="actions">
-                            <a href="../controllers/aliment_controller.php?action=edit&id=<?php echo $a['id_aliment']; ?>" class="btn btn-warning btn-sm">Modifier</a>
-                            <a href="../controllers/aliment_controller.php?action=supprimer&id=<?php echo $a['id_aliment']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Supprimer cet aliment ?')">Supprimer</a>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
+                    <?php if (empty($aliments)): ?>
+                        <tr><td colspan="7" style="text-align:center;color:#6c757d;">Aucun aliment trouvé.</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($aliments as $a): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($a['nom']); ?></td>
+                            <td><?php echo htmlspecialchars($a['categorie']); ?></td>
+                            <td><?php echo $a['kcal_portion']; ?></td>
+                            <td><?php echo $a['co2_impact']; ?></td>
+                            <td><?php echo $a['est_bio'] ? '<span class="badge badge-bio">Bio</span>' : '—'; ?></td>
+                            <td><?php echo $a['est_local'] ? '<span class="badge badge-local">Local</span>' : '—'; ?></td>
+                            <td class="actions">
+                                <a href="aliment_controller.php?action=edit&id=<?php echo $a['id_aliment']; ?>" class="btn btn-warning btn-sm">Modifier</a>
+                                <form method="POST" action="aliment_controller.php?action=supprimer" style="display:inline;" onsubmit="return confirm('Supprimer cet aliment ?');">
+                                    <input type="hidden" name="id" value="<?php echo $a['id_aliment']; ?>">
+                                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -126,36 +160,30 @@
 <div class="modal-overlay <?php echo (!empty($error) && $action === 'ajouter') ? 'active' : ''; ?>" id="modalAjout">
     <div class="modal">
         <h3>Ajouter un aliment</h3>
-        <form method="POST" action="../controllers/aliment_controller.php?action=ajouter" id="formAjoutAliment" onsubmit="return validerFormAliment(this)">
+        <form method="POST" action="aliment_controller.php?action=ajouter" onsubmit="return validerFormAliment(this)">
             <div class="form-row">
                 <div class="form-group">
                     <label>Nom de l'aliment</label>
-                    <input type="text" name="nom" placeholder="Ex: Huile d'olive" id="ajout_nom">
+                    <input type="text" name="nom" placeholder="Ex: Huile d'olive">
                 </div>
                 <div class="form-group">
                     <label>Catégorie</label>
-                    <input type="text" name="categorie" placeholder="Ex: Fruits, Légumes, Protéines..." id="ajout_categorie">
+                    <input type="text" name="categorie" placeholder="Ex: Fruits, Légumes...">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Calories (kcal / 100g)</label>
-                    <input type="text" name="kcal_portion" placeholder="Ex: 884" id="ajout_kcal">
+                    <input type="text" name="kcal_portion" placeholder="Ex: 884">
                 </div>
                 <div class="form-group">
                     <label>Impact CO₂ (kg)</label>
-                    <input type="text" name="co2_impact" placeholder="Ex: 0.8" id="ajout_co2">
+                    <input type="text" name="co2_impact" placeholder="Ex: 0.8">
                 </div>
             </div>
             <div style="display:flex;gap:24px;">
-                <div class="form-check">
-                    <input type="checkbox" name="est_bio" id="checkBio">
-                    <label for="checkBio">Produit Bio</label>
-                </div>
-                <div class="form-check">
-                    <input type="checkbox" name="est_local" id="checkLocal">
-                    <label for="checkLocal">Produit Local</label>
-                </div>
+                <div class="form-check"><input type="checkbox" name="est_bio" id="checkBio"><label for="checkBio">Produit Bio</label></div>
+                <div class="form-check"><input type="checkbox" name="est_local" id="checkLocal"><label for="checkLocal">Produit Local</label></div>
             </div>
             <div id="erreurAjout" style="color:#e63946;margin-top:8px;display:none;"></div>
             <div class="modal-actions">
@@ -171,7 +199,7 @@
 <div class="modal-overlay active" id="modalModif">
     <div class="modal">
         <h3>Modifier l'aliment</h3>
-        <form method="POST" action="../controllers/aliment_controller.php?action=modifier" id="formModifAliment" onsubmit="return validerFormAliment(this)">
+        <form method="POST" action="aliment_controller.php?action=modifier" onsubmit="return validerFormAliment(this)">
             <input type="hidden" name="id" value="<?php echo $alimentEdit['id_aliment']; ?>">
             <div class="form-row">
                 <div class="form-group">
@@ -194,18 +222,12 @@
                 </div>
             </div>
             <div style="display:flex;gap:24px;">
-                <div class="form-check">
-                    <input type="checkbox" name="est_bio" id="editBio" <?php echo $alimentEdit['est_bio'] ? 'checked' : ''; ?>>
-                    <label for="editBio">Produit Bio</label>
-                </div>
-                <div class="form-check">
-                    <input type="checkbox" name="est_local" id="editLocal" <?php echo $alimentEdit['est_local'] ? 'checked' : ''; ?>>
-                    <label for="editLocal">Produit Local</label>
-                </div>
+                <div class="form-check"><input type="checkbox" name="est_bio" id="editBio" <?php echo $alimentEdit['est_bio'] ? 'checked' : ''; ?>><label for="editBio">Produit Bio</label></div>
+                <div class="form-check"><input type="checkbox" name="est_local" id="editLocal" <?php echo $alimentEdit['est_local'] ? 'checked' : ''; ?>><label for="editLocal">Produit Local</label></div>
             </div>
             <div id="erreurModif" style="color:#e63946;margin-top:8px;display:none;"></div>
             <div class="modal-actions">
-                <a href="../controllers/aliment_controller.php" class="btn btn-outline">Annuler</a>
+                <a href="aliment_controller.php" class="btn btn-outline">Annuler</a>
                 <button type="submit" class="btn btn-primary">Enregistrer</button>
             </div>
         </form>

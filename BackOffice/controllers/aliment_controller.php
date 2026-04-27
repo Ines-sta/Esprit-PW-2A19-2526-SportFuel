@@ -1,5 +1,5 @@
 <?php
-// Controller: AlimentController
+// Controller: Aliment (BackOffice — CRUD + recherche + stats)
 
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../models/Aliment.php';
@@ -9,7 +9,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $error = '';
 $success = '';
 
-// Traitement des actions
+// ===== Actions =====
 switch ($action) {
 
     case 'ajouter':
@@ -21,20 +21,13 @@ switch ($action) {
             $est_bio = isset($_POST['est_bio']) ? 1 : 0;
             $est_local = isset($_POST['est_local']) ? 1 : 0;
 
-            // Validation côté serveur
-            if (empty($nom)) {
-                $error = "Le nom de l'aliment est obligatoire.";
-            } elseif (strlen($nom) > 150) {
-                $error = "Le nom ne doit pas dépasser 150 caractères.";
-            } elseif (empty($categorie)) {
-                $error = "La catégorie est obligatoire.";
-            } elseif (strlen($categorie) > 100) {
-                $error = "La catégorie ne doit pas dépasser 100 caractères.";
-            } elseif ($kcal_portion <= 0) {
-                $error = "Les calories doivent être un nombre positif.";
-            } elseif ($co2_impact < 0) {
-                $error = "L'impact CO₂ doit être un nombre positif.";
-            } else {
+            if (empty($nom))                       $error = "Le nom de l'aliment est obligatoire.";
+            elseif (strlen($nom) > 150)            $error = "Le nom ne doit pas dépasser 150 caractères.";
+            elseif (empty($categorie))             $error = "La catégorie est obligatoire.";
+            elseif (strlen($categorie) > 100)      $error = "La catégorie ne doit pas dépasser 100 caractères.";
+            elseif ($kcal_portion <= 0)            $error = "Les calories doivent être un nombre positif.";
+            elseif ($co2_impact < 0)               $error = "L'impact CO₂ doit être un nombre positif.";
+            else {
                 $alimentModel->ajouter($nom, $categorie, $kcal_portion, $co2_impact, $est_bio, $est_local);
                 header('Location: aliment_controller.php?success=ajout');
                 exit;
@@ -52,21 +45,14 @@ switch ($action) {
             $est_bio = isset($_POST['est_bio']) ? 1 : 0;
             $est_local = isset($_POST['est_local']) ? 1 : 0;
 
-            if ($id <= 0) {
-                $error = "Aliment invalide.";
-            } elseif (empty($nom)) {
-                $error = "Le nom de l'aliment est obligatoire.";
-            } elseif (strlen($nom) > 150) {
-                $error = "Le nom ne doit pas dépasser 150 caractères.";
-            } elseif (empty($categorie)) {
-                $error = "La catégorie est obligatoire.";
-            } elseif (strlen($categorie) > 100) {
-                $error = "La catégorie ne doit pas dépasser 100 caractères.";
-            } elseif ($kcal_portion <= 0) {
-                $error = "Les calories doivent être un nombre positif.";
-            } elseif ($co2_impact < 0) {
-                $error = "L'impact CO₂ doit être un nombre positif.";
-            } else {
+            if ($id <= 0)                          $error = "Aliment invalide.";
+            elseif (empty($nom))                   $error = "Le nom de l'aliment est obligatoire.";
+            elseif (strlen($nom) > 150)            $error = "Le nom ne doit pas dépasser 150 caractères.";
+            elseif (empty($categorie))             $error = "La catégorie est obligatoire.";
+            elseif (strlen($categorie) > 100)      $error = "La catégorie ne doit pas dépasser 100 caractères.";
+            elseif ($kcal_portion <= 0)            $error = "Les calories doivent être un nombre positif.";
+            elseif ($co2_impact < 0)               $error = "L'impact CO₂ doit être un nombre positif.";
+            else {
                 $alimentModel->modifier($id, $nom, $categorie, $kcal_portion, $co2_impact, $est_bio, $est_local);
                 header('Location: aliment_controller.php?success=modif');
                 exit;
@@ -75,7 +61,8 @@ switch ($action) {
         break;
 
     case 'supprimer':
-        $id = intval($_GET['id'] ?? 0);
+        // Accepte GET (legacy) ou POST (recommandé)
+        $id = intval($_REQUEST['id'] ?? 0);
         if ($id > 0) {
             $alimentModel->supprimer($id);
             header('Location: aliment_controller.php?success=suppr');
@@ -84,7 +71,7 @@ switch ($action) {
         break;
 }
 
-// Message de succès
+// Messages flash
 if (isset($_GET['success'])) {
     switch ($_GET['success']) {
         case 'ajout': $success = "Aliment ajouté avec succès."; break;
@@ -93,14 +80,20 @@ if (isset($_GET['success'])) {
     }
 }
 
-// Récupérer les données pour la vue
-$aliments = $alimentModel->listerTout();
+// ===== Filtres GET =====
+$filtre_q         = $_GET['q'] ?? '';
+$filtre_categorie = $_GET['categorie'] ?? '';
+$filtre_bio       = $_GET['bio'] ?? '';
+$filtre_local     = $_GET['local'] ?? '';
 
-// Récupérer l'aliment à modifier (si demandé)
+$aliments   = $alimentModel->rechercher($filtre_q, $filtre_categorie, $filtre_bio, $filtre_local);
+$categories = $alimentModel->getCategories();
+$stats      = $alimentModel->statistiques();
+
+// Aliment à modifier
 $alimentEdit = null;
 if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) {
     $alimentEdit = $alimentModel->getById(intval($_GET['id']));
 }
 
-// Charger la vue
 require_once __DIR__ . '/../views/aliments/aliments.php';
