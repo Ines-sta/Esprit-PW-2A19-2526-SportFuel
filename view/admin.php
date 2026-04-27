@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_email']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
-    header('Location: ../index.html');
+    header('Location: index.html');
     exit;
 }
 require_once __DIR__ . '/../controller/config.php';
@@ -30,8 +30,8 @@ $utilisateurs = Utilisateur::getAll($pdo);
         <p>Administration — Panneau de contrôle</p>
       </div>
       <div class="topbar-actions">
-        <a class="btn btn-outline" href="index.html" style="text-decoration:none;">🏠 Accueil</a>
-        <a class="btn btn-outline" href="../controller/AuthController.php?action=logout" style="text-decoration:none; color:#dc2626; border-color:#fee2e2; background:#fef2f2;">🚪 Déconnexion</a>
+        <a class="btn btn-outline" href="/SportFuel-Module1/view/index.html" style="text-decoration:none;">🏠 Accueil</a>
+        <a class="btn btn-outline" href="/SportFuel-Module1/controller/AuthController.php?action=logout" style="text-decoration:none; color:#dc2626; border-color:#fee2e2; background:#fef2f2;">🚪 Déconnexion</a>
         <div class="notif-btn">🔔<div class="notif-dot"></div></div>
         <button class="btn btn-outline">📤 Exporter</button>
         <button class="btn btn-primary" onclick="openModal(false)">➕ Ajouter un utilisateur</button>
@@ -153,7 +153,7 @@ $utilisateurs = Utilisateur::getAll($pdo);
     </div>
   </div>
 
-  <!-- MODAL -->
+  
 
   <div class="modal-overlay" id="modal">
     <div class="modal">

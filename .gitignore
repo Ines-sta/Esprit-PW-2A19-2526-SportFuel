@@ -9,5 +9,4 @@ error_log
 .DS_Store
 Thumbs.db
 
-# SQL dumps (optional, but database.sql might be a setup script so maybe keep it)
-# database.sql
+# SQL dumps (optionnel)

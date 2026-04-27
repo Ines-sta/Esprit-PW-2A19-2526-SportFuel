@@ -44,6 +44,7 @@ Application web de nutrition intelligente pour sportifs, développée dans le ca
 
    * Placez le projet dans le dossier `www` (WAMP) ou `htdocs` (XAMPP).
    * Démarrez Apache et MySQL depuis l'interface de WAMP/XAMPP.
+   * Créez la base une fois en ouvrant `http://localhost/…/init_db.php` (initialisation PDO, sans import SQL manuel). Adaptez `controller/db_settings.php` si le mot de passe MySQL n’est pas vide.
    * Accédez au projet via `http://localhost/Esprit-PW-2A19-2526-SportFuel`.
 
 ## Structure du projet

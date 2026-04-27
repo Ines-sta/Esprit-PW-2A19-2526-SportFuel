@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SportFuel — Panel</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    // Redirection automatique si ouvert depuis file://
+    if (window.location.protocol === 'file:') {
+      window.location.replace('http://localhost/SportFuel-Module1/view/index.html');
+    }
+  </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -277,6 +283,40 @@
       transform: translateY(-2px);
     }
 
+    .btn-signup-admin {
+      background: linear-gradient(135deg, #f4a261, #e76f51);
+      color: white;
+    }
+
+    .btn-signup-admin:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(244,162,97,0.4);
+    }
+
+    .btn-role-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      z-index: 2;
+      margin-top: 32px;
+    }
+
+    .btn-role-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-role-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
     @media (max-width: 620px) {
       .left-panel {
         padding: 40px 24px;
@@ -337,8 +377,15 @@
     </div>
 
     <div class="panel-actions">
-      <a class="btn-login" href="connexion.html">Se connecter</a>
-      <a class="btn-signup" href="inscription.html">S'inscrire</a>
+      <a class="btn-login" href="connexion.html">🔑 Se connecter</a>
+    </div>
+
+    <div class="btn-role-section">
+      <div class="btn-role-label">Créer un compte</div>
+      <div class="btn-role-row">
+        <a class="btn-signup" href="inscription.html?role=Sportif">🏃 S'inscrire — Sportif</a>
+        <a class="btn-signup-admin" href="inscription.html?role=Admin">⭐ S'inscrire — Admin</a>
+      </div>
     </div>
   </div>
 </body>

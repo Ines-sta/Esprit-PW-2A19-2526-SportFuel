@@ -36,8 +36,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const poids = document.getElementById('poids')?.value || '';
     const taille = document.getElementById('taille')?.value || '';
     
-    // Physical stats are usually on stat-pills or inputs depending on UI state
-    // Let's ensure we get them correctly
+    
     const data = {
         nom: nom,
         sport: sportInput ? sportInput.value : 'Marathon',
@@ -57,7 +56,7 @@ window.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    fetch('../controller/ProfilController.php?action=save', {
+    fetch('/SportFuel-Module1/controller/ProfilController.php?action=save', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -93,12 +92,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
   window.deleteAccount = function() {
     if (confirm("Voulez-vous VRAIMENT supprimer votre compte ? Cette action est totalement irréversible.")) {
-      fetch('../controller/ProfilController.php?action=deleteAccount', { method: 'POST' })
+      fetch('/SportFuel-Module1/controller/ProfilController.php?action=deleteAccount', { method: 'POST' })
       .then(r => r.json())
       .then(res => {
          if (res.success) {
             alert('Compte supprimé définitivement.');
-            window.location.href = '../controller/AuthController.php?action=logout';
+            window.location.href = '/SportFuel-Module1/controller/AuthController.php?action=logout';
          } else {
             alert('Erreur: ' + (res.message || 'inconnue'));
          }

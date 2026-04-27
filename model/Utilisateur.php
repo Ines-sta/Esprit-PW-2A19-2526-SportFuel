@@ -13,6 +13,8 @@ class Utilisateur {
     private $frequence;
     private $role;
     private $statut;
+    /** @var string|null rempli par getAll() / hydratation admin */
+    public $date_inscription;
 
     public function __construct($id = null, $nom = '', $email = '', $password = '', $age = 0, $poids = 0, $taille = 0, $sport = 'Aucun', $objectif = 'Non défini', $niveau = 'Débutant', $frequence = 1, $role = 'Sportif', $statut = 'Actif') {
         $this->id = $id;
@@ -110,34 +112,49 @@ class Utilisateur {
     }
 
     public static function getAll(PDO $pdo) {
-        $sql = "SELECT * FROM utilisateurs ORDER BY date_inscription DESC";
-        $stmt = $pdo->query($sql);
-        $users = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $user = new Utilisateur(
-                $row['id'], $row['nom'], $row['email'], $row['mot_de_passe'], 
-                $row['age'], $row['poids'], $row['taille'], 
-                $row['sport_pratique'] ?? '', $row['objectif'] ?? '', $row['niveau'] ?? '', $row['seances_semaine'] ?? 1,
-                $row['role'] ?? 'Sportif', $row['statut'] ?? 'Actif'
-            );
-            $user->date_inscription = $row['date_inscription'] ?? ''; // Adding dynamic prop for admin display
-            $users[] = $user;
+        try {
+            /* id toujours présent ; date_inscription peut manquer sur d'anciennes BDD */
+            $sql = "SELECT * FROM utilisateurs ORDER BY id DESC";
+            $stmt = $pdo->query($sql);
+            if (!$stmt) return [];
+            
+            $users = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $user = new Utilisateur(
+                    $row['id'], $row['nom'], $row['email'], $row['mot_de_passe'], 
+                    $row['age'], $row['poids'], $row['taille'], 
+                    $row['sport_pratique'] ?? '', $row['objectif'] ?? '', $row['niveau'] ?? '', $row['seances_semaine'] ?? 1,
+                    $row['role'] ?? 'Sportif', $row['statut'] ?? 'Actif'
+                );
+                $user->date_inscription = $row['date_inscription'] ?? '';
+                $users[] = $user;
+            }
+            return $users;
+        } catch (PDOException $e) {
+            return [];
         }
-        return $users;
     }
 
     public static function getStats(PDO $pdo) {
-        return [
-            'total' => $pdo->query("SELECT COUNT(*) FROM utilisateurs")->fetchColumn(),
-            'sportifs' => $pdo->query("SELECT COUNT(*) FROM utilisateurs WHERE role = 'Sportif'")->fetchColumn(),
-            'coachs' => $pdo->query("SELECT COUNT(*) FROM utilisateurs WHERE role = 'Coach'")->fetchColumn(),
-            'inactifs' => $pdo->query("SELECT COUNT(*) FROM utilisateurs WHERE statut = 'Inactif'")->fetchColumn(),
-        ];
+        try {
+            return [
+                'total' => $pdo->query("SELECT COUNT(*) FROM utilisateurs")->fetchColumn(),
+                'sportifs' => $pdo->query("SELECT COUNT(*) FROM utilisateurs WHERE role = 'Sportif'")->fetchColumn(),
+                'coachs' => $pdo->query("SELECT COUNT(*) FROM utilisateurs WHERE role = 'Coach'")->fetchColumn(),
+                'inactifs' => $pdo->query("SELECT COUNT(*) FROM utilisateurs WHERE statut = 'Inactif'")->fetchColumn(),
+            ];
+        } catch (PDOException $e) {
+            return ['total' => 0, 'sportifs' => 0, 'coachs' => 0, 'inactifs' => 0];
+        }
     }
 
     public static function delete(PDO $pdo, $id) {
-        $stmt = $pdo->prepare("DELETE FROM utilisateurs WHERE id = :id");
-        return $stmt->execute([':id' => $id]);
+        try {
+            $stmt = $pdo->prepare("DELETE FROM utilisateurs WHERE id = :id");
+            return $stmt->execute([':id' => $id]);
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 }
 ?>

@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('modal').classList.remove('open'); 
   };
 
-  // Close modal on overlay click
+  
   const modalOverlay = document.getElementById('modal');
   if (modalOverlay) {
     modalOverlay.addEventListener('click', function(e) { 
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Event Delegation for Table Actions (Edit / Delete)
+  
   const usersTable = document.getElementById('usersTable');
   if (usersTable) {
     usersTable.addEventListener('click', function(e) {
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (btn.classList.contains('delete')) {
         if (confirm(`⚠️ Voulez-vous vraiment supprimer DÉFINITIVEMENT l'utilisateur : ${uName} ?`)) {
-          fetch('../controller/AdminController.php?action=delete', {
+          fetch('/SportFuel-Module1/controller/AdminController.php?action=delete', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: uId })
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Create / Update Submit
+  
   const saveBtn = document.querySelector('.modal-footer .btn-primary');
   if (saveBtn) {
     saveBtn.addEventListener('click', function() {
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data.id = currentEditId;
       }
 
-      const endpoint = editMode ? '../controller/AdminController.php?action=edit' : '../controller/AdminController.php?action=add';
+      const endpoint = editMode ? '/SportFuel-Module1/controller/AdminController.php?action=edit' : '/SportFuel-Module1/controller/AdminController.php?action=add';
 
       fetch(endpoint, {
         method: 'POST',
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Filtering logic
+  
   const searchInput = document.getElementById('searchInput');
   const roleFilter = document.getElementById('roleFilter');
   const statusFilter = document.getElementById('statusFilter');

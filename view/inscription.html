@@ -1,52 +1,146 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription - SportFuel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .panel.signup-mode { transform: translateX(100%); }
-        .image-area { 
-            background-image: url('img1.png') !important;
-            background-size: cover !important;
-            background-position: center !important;
-            background-repeat: no-repeat !important;
-            transform: translateX(-30px); 
-            opacity: 0; 
-            animation: fadeInLeft 0.7s forwards; 
-        }
-        .form-section { transform: translateX(30px); opacity: 0; animation: fadeInRight 0.7s forwards; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription - SportFuel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .image-area {
+      background-image: url('img1.png') !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+    }
+    .role-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 10px 0 6px;
+      display: block;
+    }
+    .role-selector {
+      display: flex !important;
+      gap: 10px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .role-btn {
+      flex: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 5px !important;
+      padding: 14px 8px !important;
+      background: rgba(255,255,255,0.07) !important;
+      border: 2px solid rgba(255,255,255,0.2) !important;
+      border-radius: 14px !important;
+      color: rgba(255,255,255,0.55) !important;
+      font-family: 'Poppins', sans-serif !important;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
+      width: auto !important;
+      margin-top: 0 !important;
+    }
+    .role-btn .r-icon { font-size: 26px; display: block; }
+    .role-btn .r-name { font-size: 13px; display: block; }
+    .role-btn .r-sub  { font-size: 10px; font-weight: 400; opacity: 0.6; display: block; }
+    .role-btn:hover {
+      background: rgba(255,255,255,0.12) !important;
+      border-color: rgba(255,255,255,0.4) !important;
+      color: white !important;
+      transform: translateY(-2px) !important;
+    }
+    .role-btn.sel-sportif {
+      background: rgba(82,183,136,0.2) !important;
+      border-color: #52b788 !important;
+      color: #52b788 !important;
+      box-shadow: 0 4px 16px rgba(82,183,136,0.3) !important;
+    }
+    .role-btn.sel-admin {
+      background: rgba(244,162,97,0.2) !important;
+      border-color: #f4a261 !important;
+      color: #f4a261 !important;
+      box-shadow: 0 4px 16px rgba(244,162,97,0.3) !important;
+    }
+    #submitBtn { background: linear-gradient(135deg, #52b788, #2d6a4f) !important; transition: all 0.3s !important; }
+    #submitBtn.admin-mode { background: linear-gradient(135deg, #f4a261, #e76f51) !important; }
+    
+    .server-alert {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; z-index: 9999; color: white;
+      font-family: 'Poppins', sans-serif; text-align: center; padding: 20px;
+    }
+    .server-alert h2 { color: #f4a261; font-size: 1.6rem; margin-bottom: 12px; }
+    .server-alert p  { color: rgba(255,255,255,0.7); margin-bottom: 20px; }
+    .server-alert a  {
+      padding: 14px 28px; background: linear-gradient(135deg, #52b788, #f4a261);
+      color: white; text-decoration: none; border-radius: 999px;
+      font-weight: 700; font-size: 15px;
+    }
+  </style>
+  <script>
+    
+    if (window.location.protocol === 'file:') {
+      const role = new URLSearchParams(window.location.search).get('role') || '';
+      const correct = 'http://localhost/SportFuel-Module1/view/inscription.html' + (role ? '?role=' + role : '');
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.innerHTML = `
+          <div class="server-alert">
+            <h2>⚠️ Mauvaise ouverture !</h2>
+            <p>Ce fichier doit être ouvert via <strong>XAMPP</strong>, pas directement depuis votre disque.<br><br>
+            Assurez-vous que <strong>Apache</strong> et <strong>MySQL</strong> sont démarrés dans XAMPP.</p>
+            <a href="${correct}">🚀 Accéder via localhost</a>
+          </div>`;
+      });
+    }
+  </script>
 </head>
 <body>
-    <div class="panel">
-        <div class="image-area">
-            <h3>Hello friends, ready to start?</h3>
-        </div>
-        <div class="form-section">
-            <div class="form-box">
-                <h2>Inscription</h2>
-                <form id="inscriptionForm" action="../controller/AuthController.php?action=inscription" method="POST" novalidate>
-                    <input type="text" name="nom" id="nom" placeholder="👤 Nom complet">
-                    <input type="text" name="email" id="email" placeholder="📧 Email">
-                    <select name="role" id="role" style="font-family: 'Poppins', sans-serif;">
-                        <option value="Sportif">🏃 Je m'inscris en tant que Sportif</option>
-                        <option value="Admin">⭐ Je m'inscris en tant qu'Administrateur</option>
-                    </select>
-                    <input type="password" name="password" id="password" placeholder="🔒 Mot de passe">
-                    <input type="password" name="confirmPassword" id="confirmPassword" placeholder="🔐 Confirmer mot de passe">
-                    <input type="text" name="age" id="age" placeholder="📅 Age">
-                    <input type="text" name="poids" id="poids" placeholder="⚖️ Poids (kg)">
-                    <input type="text" name="taille" id="taille" placeholder="📏 Taille (cm)">
-                    <button type="submit">S'inscrire</button>
-                </form>
-                <a class="link-btn" href="connexion.html">Déjà un compte ? Se connecter</a>
-            </div>
-        </div>
+  <div class="panel">
+    <div class="image-area">
+      <h3>Hello friends, ready to start? 🚀</h3>
     </div>
-    <script src="inscription.js"></script>
+    <div class="form-section">
+      <div class="form-box">
+        <h2>Inscription</h2>
+
+        <span class="role-label">Je m'inscris en tant que</span>
+        <div class="role-selector">
+          <button type="button" class="role-btn sel-sportif" id="btnSportif">
+            <span class="r-icon">🏃</span>
+            <span class="r-name">Sportif</span>
+            <span class="r-sub">Profil &amp; suivi</span>
+          </button>
+          <button type="button" class="role-btn" id="btnAdmin">
+            <span class="r-icon">⭐</span>
+            <span class="r-name">Admin</span>
+            <span class="r-sub">Gestion des membres</span>
+          </button>
+        </div>
+
+        <form id="inscriptionForm" action="/SportFuel-Module1/controller/AuthController.php?action=inscription" method="POST" novalidate>
+          <input type="hidden"   name="role"            id="roleInput"       value="Sportif">
+          <input type="text"     name="nom"             id="nom"             placeholder="👤 Nom complet">
+          <input type="text"     name="email"           id="email"           placeholder="📧 Email">
+          <input type="password" name="password"        id="password"        placeholder="🔒 Mot de passe">
+          <input type="password" name="confirmPassword" id="confirmPassword" placeholder="🔐 Confirmer mot de passe">
+          <input type="text"     name="age"             id="age"             placeholder="📅 Âge">
+          <input type="text"     name="poids"           id="poids"           placeholder="⚖️ Poids (kg)">
+          <input type="text"     name="taille"          id="taille"          placeholder="📏 Taille (cm)">
+          <button type="submit"  id="submitBtn">🏃 S'inscrire comme Sportif</button>
+        </form>
+
+        <a class="link-btn" href="connexion.html">Déjà un compte ? Se connecter</a>
+      </div>
+    </div>
+  </div>
+  <script src="inscription.js"></script>
 </body>
 </html>
-
