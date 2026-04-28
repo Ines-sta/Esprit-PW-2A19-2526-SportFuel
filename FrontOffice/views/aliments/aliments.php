@@ -85,15 +85,39 @@
 
     <!-- Food Grid -->
     <?php
-    $emojis = [
-        'Fruits' => '🍎',
-        'Légumes' => '🥬',
-        'Protéines' => '🥚',
-        'Céréales & Féculents' => '🌾',
-        'Produits laitiers' => '🥛',
-        'Huiles & Graisses' => '🫒',
-        'Fruits secs' => '🌰'
+    // Name-based image mapping (keyword → image file in assets/images/)
+    $imageMap = [
+        'couscous' => ['file' => 'Couscous-Complet.png', 'alt' => 'Couscous complet'],
+        'datte'    => ['file' => 'Dattes.png',           'alt' => 'Dattes'],
+        'harissa'  => ['file' => 'Harissa.jpg',          'alt' => 'Harissa'],
+        'huile'    => ['file' => 'huile.jpg',            'alt' => 'Huile d\'olive'],
+        'olive'    => ['file' => 'huile.jpg',            'alt' => 'Huile d\'olive'],
+        'poivron'  => ['file' => 'poivron.webp',         'alt' => 'Poivron'],
+        'thon'     => ['file' => 'thon.png',             'alt' => 'Thon'],
+        'yaourt'   => ['file' => 'yaourt.png',           'alt' => 'Yaourt'],
+        'yogourt'  => ['file' => 'yaourt.png',           'alt' => 'Yaourt'],
     ];
+
+    // Fallback emojis by category
+    $emojis = [
+        'Fruits'              => '🍎',
+        'Légumes'             => '🥬',
+        'Protéines'           => '🥚',
+        'Céréales & Féculents'=> '🌾',
+        'Produits laitiers'   => '🥛',
+        'Huiles & Graisses'   => '🫒',
+        'Fruits secs'         => '🌰'
+    ];
+
+    function getAlimentImage($nom, $imageMap) {
+        $nomLower = mb_strtolower($nom, 'UTF-8');
+        foreach ($imageMap as $keyword => $img) {
+            if (strpos($nomLower, $keyword) !== false) {
+                return $img;
+            }
+        }
+        return null;
+    }
     ?>
     <p style="margin-bottom:12px;color:#6c757d;"><?php echo count($aliments); ?> aliment(s) trouvé(s).</p>
     <div class="food-grid" id="foodGrid">
@@ -101,10 +125,16 @@
             <p style="color:#6c757d;">Aucun aliment ne correspond à vos critères.</p>
         <?php else: ?>
             <?php foreach ($aliments as $a):
-                $emoji = $emojis[$a['categorie']] ?? '🍽️';
+                $img = getAlimentImage($a['nom'], $imageMap);
             ?>
             <div class="food-card" data-categorie="<?php echo htmlspecialchars($a['categorie']); ?>" data-bio="<?php echo $a['est_bio']; ?>" data-local="<?php echo $a['est_local']; ?>">
-                <div class="food-card-img"><?php echo $emoji; ?></div>
+                <div class="food-card-img">
+                    <?php if ($img): ?>
+                        <img src="../assets/images/<?php echo $img['file']; ?>" alt="<?php echo htmlspecialchars($img['alt']); ?>" style="width:100%;height:100%;object-fit:contain;">
+                    <?php else: ?>
+                        <?php echo $emojis[$a['categorie']] ?? '🍽️'; ?>
+                    <?php endif; ?>
+                </div>
                 <div class="food-card-body">
                     <h4><?php echo htmlspecialchars($a['nom']); ?></h4>
                     <p class="category"><?php echo htmlspecialchars($a['categorie']); ?></p>
